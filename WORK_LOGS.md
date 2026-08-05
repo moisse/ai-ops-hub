@@ -36,14 +36,13 @@
 - [x] **Web SSH Terminal 命令行**: 实现打字输入 `top`, `status`, `ping`, `uname`, `help`, `clear` 并在屏幕追加彩色命令日志。
 - [x] **Dashboard 动态 Modal**: 实现 `Add Server` 模态弹窗与 `AIOpsDB` 数据库动态增删查改。
 
-### 16. Cherry Studio 工业级三栏式大模型中心 & 探针锁死 UI 全量上线 (2026-08-06 00:55)
-- [x] **Cherry Studio 三栏式架构 (`Settings.vue`)**:
-  - 栏 1：配置分类大导航 (模型服务、默认模型、常规设置、告警通知、关于项目)。
-  - 栏 2：`🔍 搜索模型平台...` 搜索框与全厂商列表，带真实 `OFF ⚪` / `ON 🟢` 开关与探针延迟 ms 标记。
-  - 栏 3：选中的厂商详细配置 (API Key 密码明暗切换、`[检测]` 探针、Base URL 恢复默认与锁定的 Custom Dropdown UI)。
-- [x] **纯正厂商品牌矩阵 (`useLLMStore.ts`)**: 彻底删除了厂商标题后面的混淆模型名，净化为 `智谱 AI`、`DeepSeek`、`阿里云百炼`、`月之暗面`、`硅基流动`、`字节火山`、`百度千帆`、`腾讯混元`、`零一万物`、`MiniMax`、`OpenAI`、`Anthropic`、`Google Gemini`、`Groq`、`Ollama`。
-- [x] **探针锁死与前沿 SOTA 模型树**: 探针未连通前强行锁死下拉框，探通后解锁智谱 GLM-4-plus/0520/Flash、DeepSeek-R1/V3、Qwen2.5-72B、o3-mini、Claude 3.5 Sonnet 模型树。
-- [x] **常规配置与 Webhook 告警全量真包测试**: 支持保存 CPU/内存告警阈值，提供 `[🧪 发送测试告警消息]` 真实测试发包功能。
+### 17. AI Ops 系统运维 Agent 打通 & 多服务器一键多开 SSH 终端完结 (2026-08-06 01:00)
+- [x] **AI Ops Agent 节点上下文深层打通 (`AIChat.vue`)**: 动态拉取与注入系统注册的服务器节点列表、证书与活动大模型，作为 SysAdmin Agent 提示词上下文，支持对话框 `@` 节点精确切入。
+- [x] **多服务器 SSH 终端一键多开 (`Terminal.vue`)**: 彻底删除了假默认日志，提供 `[⚡ 一键多开已注册服务器终端]` 按钮，根据用户录入的节点数量批量开起独立的 SSH 命令会话标签。
+- [x] **仪表盘一键秒切 SSH (`Dashboard.vue`)**: 点击任意服务器卡片上的 `[SSH]` 按钮，直接携带 `user@ip:port` 秒切开起该节点的专属 Terminal 会话。
+- [x] **左侧 6 大标准导航大一统与 TopNav 动态面包屑 (`Sidebar.vue` & `TopNav.vue`)**:
+  - 侧边栏标准化收纳：`仪表盘控制台`, `集群管理`, `AI 运维助手`, `SSH 终端`, `证书管理`, `系统设置`。
+  - 顶栏清空重复链接，实时呈现当前路由路径（如 `控制台 / SSH 终端`）。
 
 ---
 
