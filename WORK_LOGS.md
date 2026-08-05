@@ -36,11 +36,12 @@
 - [x] **Web SSH Terminal 命令行**: 实现打字输入 `top`, `status`, `ping`, `uname`, `help`, `clear` 并在屏幕追加彩色命令日志。
 - [x] **Dashboard 动态 Modal**: 实现 `Add Server` 模态弹窗与 `AIOpsDB` 数据库动态增删查改。
 
-### 6. Vue 3 + Vue Router 真实单页工程重构 (2026-08-06 00:23)
-- [x] **引入与挂载 Vue Router (`vue-router`)**: 彻底替代原先硬编码 `v-if`，新建 `frontend/src/router/index.ts` 路由映射表，支持 `/dashboard`, `/chat`, `/terminal`, `/certificates`, `/settings`。
-- [x] **重构全局 Sidebar 导航 (`Sidebar.vue`)**: 使用 `useRouter` 与 `useRoute` 触发编程式导航与基于当前路由的动态高亮。
-- [x] **完成全栈打包与线上部署**: 在 GCP 服务器上成功预编译 55 个 Vue 3 模块，生成 `dist/assets/index-B3rayihp.js` 生产包并常驻运行！
-- [x] **GitHub 仓库同步**: 提交 commit `refactor(frontend): integrate Vue Router` 并强推至 `main` 分支。
+### 7. 全局中英双语国际化 (i18n) 动态响应重构 (2026-08-06 00:24)
+- [x] **读取 Obsidian 创始人设计规范**: 深入研读了创始人 Moisse Li（上海该隐科技合伙人）撰写的 `AI_Ops_Dashboard_设计需求.md` 规范文档。
+- [x] **研发中英字典 (`locales.ts`)**: 构建完整中英文语言包，**默认语言置为中文 (`zh-CN`)**。
+- [x] **创建 Pinia i18n 响应式 Store (`useI18nStore.ts`)**: 实现基于 Vue 3 响应式的 `t` 转换、`toggleLanguage` 切换及 `localStorage` 语言偏好持久化。
+- [x] **顶栏 Toggle 触发器 (`TopNav.vue`)**: 增加右上角 `中文 | EN` 语言切换按钮，点击全站文案瞬间流畅无缝改变！
+- [x] **全栈部署上线**: 完成 GCP 云服务器与 GitHub (`f1fdeeb`) 同步发布。
 
 ---
 
