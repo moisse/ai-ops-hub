@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Login Portal - AI Ops Hub</title>
+<style>
+  :root { color-scheme: dark; }
+  body { background-color: #0d1322 !important; color: #dde2f8 !important; font-family: system-ui, -apple-system, sans-serif; }
+  button, input, select, textarea { background-color: #191f2f; color: #dde2f8; border-color: #3d494c; }
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=JetBrains+Mono:wght@400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-container": "#00452e",
+                        "inverse-primary": "#00687a",
+                        "on-primary-fixed": "#001f26",
+                        "on-primary-container": "#00424f",
+                        "surface-container-low": "#151b2b",
+                        "on-background": "#dde2f8",
+                        "on-primary": "#003640",
+                        "surface-dim": "#0d1322",
+                        "on-secondary-fixed": "#00174b",
+                        "surface-bright": "#33394a",
+                        "on-error": "#690005",
+                        "surface-container-lowest": "#080e1d",
+                        "primary-fixed": "#acedff",
+                        "secondary-container": "#0053db",
+                        "tertiary-container": "#1bbd85",
+                        "surface-container": "#191f2f",
+                        "secondary-fixed-dim": "#b4c5ff",
+                        "tertiary": "#4edea3",
+                        "on-surface": "#dde2f8",
+                        "on-tertiary-fixed-variant": "#005236",
+                        "surface": "#0d1322",
+                        "tertiary-fixed-dim": "#4edea3",
+                        "inverse-on-surface": "#2a3040",
+                        "error": "#ffb4ab",
+                        "primary": "#4cd7f6",
+                        "surface-container-highest": "#2f3445",
+                        "surface-tint": "#4cd7f6",
+                        "on-error-container": "#ffdad6",
+                        "on-secondary-fixed-variant": "#003ea8",
+                        "error-container": "#93000a",
+                        "on-secondary-container": "#cdd7ff",
+                        "on-tertiary-fixed": "#002113",
+                        "outline-variant": "#3d494c",
+                        "surface-container-high": "#242a3a",
+                        "tertiary-fixed": "#6ffbbe",
+                        "background": "#0d1322",
+                        "on-primary-fixed-variant": "#004e5c",
+                        "primary-container": "#06b6d4",
+                        "outline": "#869397",
+                        "primary-fixed-dim": "#4cd7f6",
+                        "secondary-fixed": "#dbe1ff",
+                        "secondary": "#b4c5ff",
+                        "surface-variant": "#2f3445",
+                        "on-secondary": "#002a78",
+                        "on-tertiary": "#003824",
+                        "on-surface-variant": "#bcc9cd",
+                        "inverse-surface": "#dde2f8",
+                        "brand-gradient-start": "#06B6D4",
+                        "brand-gradient-end": "#2563EB",
+                        "card-bg": "#111827",
+                        "input-bg": "#1E293B",
+                        "border-slate": "#334155"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem",
+                        "brand": "6px"
+                    },
+                    "spacing": {
+                        "sidebar-width": "240px",
+                        "page-margin": "24px",
+                        "xs": "4px",
+                        "gutter": "16px",
+                        "base": "4px",
+                        "card-padding": "20px",
+                        "topnav-height": "56px",
+                        "sm": "8px",
+                        "sidebar-collapsed": "64px",
+                        "md": "16px"
+                    },
+                    "fontFamily": {
+                        "body-bold": ["Inter", "sans-serif"],
+                        "display-lg": ["Inter", "sans-serif"],
+                        "headline-lg-mobile": ["Inter", "sans-serif"],
+                        "code-base": ["JetBrains Mono", "monospace"],
+                        "body-base": ["Inter", "sans-serif"],
+                        "label-caps": ["Inter", "sans-serif"],
+                        "headline-md": ["Inter", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "body-bold": ["14px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "600" }],
+                        "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "code-base": ["13px", { "lineHeight": "18px", "letterSpacing": "0em", "fontWeight": "400" }],
+                        "body-base": ["14px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400" }],
+                        "label-caps": ["11px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "headline-md": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+                    },
+                    "boxShadow": {
+                        "glow-primary": "0 0 20px rgba(6, 182, 212, 0.15)",
+                        "glow-input": "0 0 10px rgba(6, 182, 212, 0.15)"
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #0B1120;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center relative overflow-hidden bg-[#0B1120] text-on-background font-body-base">
+<!-- Language Toggle -->
+<div class="absolute top-page-margin right-page-margin z-50">
+<div class="flex items-center gap-xs bg-card-bg border border-border-slate rounded-brand p-xs">
+<button class="px-sm py-xs text-on-background bg-surface-container-high rounded-sm font-label-caps transition-colors">EN</button>
+<button class="px-sm py-xs text-on-surface-variant hover:text-on-background rounded-sm font-label-caps transition-colors">CN</button>
+</div>
+</div>
+<!-- Main Content Canvas -->
+<main class="relative z-10 w-full max-w-md px-page-margin">
+<!-- Logo Header -->
+<div class="text-center mb-8 flex flex-col items-center">
+<div class="w-16 h-16 bg-card-bg rounded-xl border border-border-slate flex items-center justify-center mb-md shadow-glow-primary">
+<span class="material-symbols-outlined text-primary text-4xl" data-icon="bolt">bolt</span>
+</div>
+<h1 class="font-display-lg text-display-lg text-on-background">AI Ops Hub</h1>
+<p class="font-body-base text-body-base text-on-surface-variant mt-sm tracking-wide">Deep Space Intelligence</p>
+</div>
+<!-- Login Card -->
+<div class="bg-card-bg border border-border-slate rounded-lg p-card-padding">
+<form class="space-y-6">
+<!-- Email Input -->
+<div>
+<label class="block font-body-bold text-body-bold text-on-background mb-sm" for="email">Email or Username</label>
+<div class="relative group">
+<span class="absolute left-sm top-1/2 -translate-y-1/2 material-symbols-outlined text-on-surface-variant group-focus-within:text-primary transition-colors" data-icon="person">person</span>
+<input class="w-full bg-input-bg border border-border-slate rounded-brand py-sm pl-10 pr-sm text-on-background font-body-base focus:border-primary focus:ring-0 focus:shadow-glow-input transition-all outline-none" id="email" placeholder="admin@aiops.hub" type="text"/>
+</div>
+</div>
+<!-- Password Input -->
+<div>
+<div class="flex justify-between items-center mb-sm">
+<label class="block font-body-bold text-body-bold text-on-background" for="password">Password</label>
+<a class="font-body-base text-body-base text-primary hover:text-primary-fixed transition-colors" href="#">Forgot Password?</a>
+</div>
+<div class="relative group">
+<span class="absolute left-sm top-1/2 -translate-y-1/2 material-symbols-outlined text-on-surface-variant group-focus-within:text-primary transition-colors" data-icon="lock">lock</span>
+<input class="w-full bg-input-bg border border-border-slate rounded-brand py-sm pl-10 pr-sm text-on-background font-body-base focus:border-primary focus:ring-0 focus:shadow-glow-input transition-all outline-none" id="password" placeholder="••••••••" type="password"/>
+</div>
+</div>
+<!-- Remember Me -->
+<div class="flex items-center">
+<input class="w-4 h-4 bg-input-bg border-border-slate rounded text-primary focus:ring-primary focus:ring-offset-background cursor-pointer" id="remember-me" type="checkbox"/>
+<label class="ml-sm block font-body-base text-body-base text-on-surface-variant cursor-pointer" for="remember-me">
+                        Remember Me
+                    </label>
+</div>
+<!-- Primary Action -->
+<button class="w-full bg-gradient-to-r from-brand-gradient-start to-brand-gradient-end text-white font-body-bold text-body-bold py-sm px-md rounded-brand hover:shadow-glow-primary transition-all duration-300 flex items-center justify-center gap-sm group" type="button">
+<span>Access Terminal</span>
+<span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</form>
+<div class="mt-8">
+<div class="relative">
+<div class="absolute inset-0 flex items-center">
+<div class="w-full border-t border-border-slate"></div>
+</div>
+<div class="relative flex justify-center text-sm">
+<span class="px-2 bg-card-bg font-body-base text-body-base text-on-surface-variant">Or continue with</span>
+</div>
+</div>
+<div class="mt-6">
+<button class="w-full flex justify-center items-center gap-sm bg-transparent border border-border-slate py-sm px-md rounded-brand text-on-background font-body-bold text-body-bold hover:border-primary hover:text-primary transition-all duration-300 group" type="button">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors" data-icon="dns">dns</span>
+                        Single Sign-On (SSO)
+                    </button>
+</div>
+</div>
+</div>
+<p class="mt-8 text-center font-body-base text-body-base text-on-surface-variant text-sm">
+            Unauthorized access is strictly prohibited. <br/>
+<a class="text-primary hover:underline" href="#">Terms of Service</a> • <a class="text-primary hover:underline" href="#">Privacy Policy</a>
+</p>
+</main>
+</body></html>
