@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-background text-text-primary font-sans;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-surface border border-border rounded-xl p-5 transition-all duration-200;
+  }
+  
+  .card-hover:hover {
+    @apply -translate-y-0.5 shadow-lg;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4), 0 0 20px rgba(6,182,212,0.08);
+    border-color: #06B6D4;
+  }
+
+  .btn-primary {
+    @apply bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-medium rounded-lg px-5 py-2.5 transition-all hover:brightness-110;
+  }
+
+  .btn-secondary {
+    @apply bg-transparent border border-border text-text-secondary rounded-lg px-5 py-2.5 transition-all hover:border-primary hover:text-primary;
+  }
+
+  .status-dot {
+    @apply w-2 h-2 rounded-full;
+  }
+
+  .status-dot-online {
+    @apply bg-success;
+    animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+  }
+
+  .status-dot-warning {
+    @apply bg-warning;
+  }
+
+  .status-dot-offline {
+    @apply bg-error;
+  }
+
+  @keyframes pulse-ring {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16,185,129,0.7); }
+    70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16,185,129,0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16,185,129,0); }
+  }
+}
