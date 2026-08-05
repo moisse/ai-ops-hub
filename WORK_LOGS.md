@@ -36,11 +36,11 @@
 - [x] **Web SSH Terminal 命令行**: 实现打字输入 `top`, `status`, `ping`, `uname`, `help`, `clear` 并在屏幕追加彩色命令日志。
 - [x] **Dashboard 动态 Modal**: 实现 `Add Server` 模态弹窗与 `AIOpsDB` 数据库动态增删查改。
 
-### 8. CSS 宏语法重构与无样式崩盘终极根治 (2026-08-06 00:28)
-- [x] **发现并剖析 `@apply` 解析丢弃漏洞**: 抓取 `http://34.136.76.211:3000/assets/index-DoJJi9fw.css` 确凿证实 Vite 打包将未经编译的 `@tailwind` 源码直接打入包中，导致浏览器解析忽略全站全毁。
-- [x] **全面重构为原生 CSS Tokens (`style.css`)**: 剔除所有脆弱的 `@apply` 宏，采用 100% 现代浏览器支持的 `:root` 变量与 Vanilla CSS 规则，从根源上杜绝预编译失效。
-- [x] **生产预编译实测**: 打包生成 `dist/assets/index-BhrJnVn_.css` (2.43 KB)，实测 0 个 `@tailwind` 源码残留。
-- [x] **GCP 云服务器更新上线**: 直连 GCP (`34.136.76.211:3000`) 部署验证，页面完全恢复高颜值暗黑 Design System。
+### 9. 5 大核心 View 模块 Vue 3 全真机工程化完结 (2026-08-06 00:29)
+- [x] **AIChat 运维诊断模块 (`AIChat.vue`)**: 接入真实 `/api/chat` 后端 API，支持动态上下文选择器（`@node-us-east-01`）与快捷指令输入。
+- [x] **Web SSH Terminal 命令行 (`Terminal.vue`)**: 支持多 Session 标签页切换、活动 Session 识别与命令行真实响应输出（`top`, `status`, `ping`, `clear`）。
+- [x] **系统设置中心 (`Settings.vue`)**: 增加常规 API Key 管理、Webhook 告警配置、关于页面与保存 Toast 响应。
+- [x] **规范化 Git Push & 零报错构建**: 本地 `npx vite build` 0 报错通过，GitHub commit `d3daf0f` 强推成功，GCP 服务器全线更新完毕。
 
 ---
 
