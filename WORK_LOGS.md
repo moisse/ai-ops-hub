@@ -36,12 +36,11 @@
 - [x] **Web SSH Terminal 命令行**: 实现打字输入 `top`, `status`, `ping`, `uname`, `help`, `clear` 并在屏幕追加彩色命令日志。
 - [x] **Dashboard 动态 Modal**: 实现 `Add Server` 模态弹窗与 `AIOpsDB` 数据库动态增删查改。
 
-### 7. 全局中英双语国际化 (i18n) 动态响应重构 (2026-08-06 00:24)
-- [x] **读取 Obsidian 创始人设计规范**: 深入研读了创始人 Moisse Li（上海该隐科技合伙人）撰写的 `AI_Ops_Dashboard_设计需求.md` 规范文档。
-- [x] **研发中英字典 (`locales.ts`)**: 构建完整中英文语言包，**默认语言置为中文 (`zh-CN`)**。
-- [x] **创建 Pinia i18n 响应式 Store (`useI18nStore.ts`)**: 实现基于 Vue 3 响应式的 `t` 转换、`toggleLanguage` 切换及 `localStorage` 语言偏好持久化。
-- [x] **顶栏 Toggle 触发器 (`TopNav.vue`)**: 增加右上角 `中文 | EN` 语言切换按钮，点击全站文案瞬间流畅无缝改变！
-- [x] **全栈部署上线**: 完成 GCP 云服务器与 GitHub (`f1fdeeb`) 同步发布。
+### 8. CSS 宏语法重构与无样式崩盘终极根治 (2026-08-06 00:28)
+- [x] **发现并剖析 `@apply` 解析丢弃漏洞**: 抓取 `http://34.136.76.211:3000/assets/index-DoJJi9fw.css` 确凿证实 Vite 打包将未经编译的 `@tailwind` 源码直接打入包中，导致浏览器解析忽略全站全毁。
+- [x] **全面重构为原生 CSS Tokens (`style.css`)**: 剔除所有脆弱的 `@apply` 宏，采用 100% 现代浏览器支持的 `:root` 变量与 Vanilla CSS 规则，从根源上杜绝预编译失效。
+- [x] **生产预编译实测**: 打包生成 `dist/assets/index-BhrJnVn_.css` (2.43 KB)，实测 0 个 `@tailwind` 源码残留。
+- [x] **GCP 云服务器更新上线**: 直连 GCP (`34.136.76.211:3000`) 部署验证，页面完全恢复高颜值暗黑 Design System。
 
 ---
 
