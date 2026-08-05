@@ -1,10 +1,17 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useI18nStore } from '../stores/useI18nStore'
 import { useLLMStore } from '../stores/useLLMStore'
 
 const i18n = useI18nStore()
 const llm = useLLMStore()
+
+interface ServerNode {
+  id: string;
+  hostname: string;
+  ip: string;
+  status: string;
+}
 
 interface Message {
   id: string;
@@ -14,24 +21,18 @@ interface Message {
   nodeContext?: string;
 }
 
-const messages = ref<Message[]>([
-  {
-    id: 'm1',
-    sender: 'ai',
-    text: '你好！我是你的 AI Ops 系统运维大模型助手。我已经集成了 SysAdmin 专家级运维提示词与 Skill 技能库。你可以直接提问，或从下方【⚡ 运维 Skill 技能库】一键加载常用诊断指令。',
-    timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-  }
-])
+const registeredServers = ref<ServerNode[]>([])
+const selectedNodeId = ref<string>('all')
 
+const messages = ref<Message[]>([])
 const inputMessage = ref('')
-const selectedNode = ref('all')
 const isSending = ref(false)
 
-// Built-in DevOps Skill Presets
+// Built-in SysAdmin Agent Skill Presets
 const opsSkills = [
   {
     name: '🛠️ CPU/内存泄漏排查',
-    prompt: '@node-us-east-01 分析系统 CPU 占用高达 90% 的进程，并给出 top/pidstat 排查与 kill 指令。'
+    prompt: '分析系统 CPU 占用高达 90% 的进程，并给出 top/pidstat 排查与 kill 指令。'
   },
   {
     name: '🚀 Docker 容器崩盘诊断',
@@ -51,20 +52,47 @@ const opsSkills = [
   }
 ]
 
+async function loadSystemContext() {
+  try {
+    const res = await fetch('/api/servers')
+    if (res.ok) {
+      registeredServers.value = await res.json()
+    }
+  } catch (e) {
+    console.warn('Servers context fetch fallback')
+  }
+
+  // Initial Agent Greeting with System Context
+  const serverCount = registeredServers.value.length
+  messages.value = [
+    {
+      id: 'm1',
+      sender: 'ai',
+      text: i18n.currentLang === 'zh-CN'
+        ? `你好！我是你的 AI Ops 系统运维大模型 Agent。我已经成功连通系统数据库，当前已识别系统内注册的 ${serverCount} 台服务器节点与环境监控指标。你可以选择具体节点发问，或使用下方【⚡ 运维 Skill 技能库】触发专业诊断。`
+        : `Hello! I am your AI Ops System SysAdmin Agent. Connected to system database with ${serverCount} registered server node(s). Feel free to ask questions or trigger SRE Skills below.`,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    }
+  ]
+}
+
 function applySkill(prompt: string) {
-  inputMessage.value = prompt
+  const nodePrefix = selectedNodeId.value !== 'all' ? `@node-${selectedNodeId.value} ` : ''
+  inputMessage.value = nodePrefix + prompt
 }
 
 async function sendMessage() {
   if (!inputMessage.value.trim() || isSending.value) return
 
   const userText = inputMessage.value.trim()
+  const targetNode = registeredServers.value.find(s => s.id === selectedNodeId.value)
+
   messages.value.push({
     id: 'msg_' + Date.now(),
     sender: 'user',
     text: userText,
     timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-    nodeContext: selectedNode.value !== 'all' ? selectedNode.value : undefined
+    nodeContext: targetNode ? targetNode.hostname : undefined
   })
 
   inputMessage.value = ''
@@ -77,7 +105,8 @@ async function sendMessage() {
       body: JSON.stringify({
         message: userText,
         model: llm.activeProvider.selectedModel,
-        node: selectedNode.value
+        node: targetNode ? targetNode.hostname : 'All Clusters',
+        context: registeredServers.value
       })
     })
     const data = await res.json()
@@ -85,20 +114,24 @@ async function sendMessage() {
     messages.value.push({
       id: 'ai_' + Date.now(),
       sender: 'ai',
-      text: data.reply || `[AI Response via ${llm.activeProvider.selectedModel}]: Node health is normal.`,
+      text: data.reply || `[AI Response via ${llm.activeProvider.selectedModel}]: Node ${targetNode ? targetNode.hostname : 'Cluster'} health normal.`,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     })
   } catch (e) {
     messages.value.push({
       id: 'ai_err_' + Date.now(),
       sender: 'ai',
-      text: `[AI 诊断模式 via ${llm.activeProvider.selectedModel}]: 已接收指令。针对节点 [${selectedNode.value}]，建议检测 systemctl status app-service 与 df -h 内存。`,
+      text: `[AI Agent 运维诊断 via ${llm.activeProvider.selectedModel}]: 针对节点 [${targetNode ? targetNode.hostname : '全量集群'}]，建议执行 systemctl status 与 journalctl -xe 排查底层探针。`,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     })
   } finally {
     isSending.value = false
   }
 }
+
+onMounted(() => {
+  loadSystemContext()
+})
 </script>
 
 <template>
@@ -110,14 +143,16 @@ async function sendMessage() {
         <p class="text-xs text-[#94A3B8] mt-0.5">{{ i18n.t.chat.subtitle }}</p>
       </div>
 
-      <!-- Active Model Indicator -->
+      <!-- Node Context Selector & Active Model Badge -->
       <div class="flex items-center gap-3">
-        <select v-model="selectedNode" class="bg-[#0F172A] border border-[#1E293B] text-xs text-[#F1F5F9] rounded-lg px-3 py-1.5 outline-none focus:border-[#06B6D4]">
+        <select v-model="selectedNodeId" class="bg-[#0F172A] border border-[#1E293B] text-xs text-[#F1F5F9] rounded-xl px-3 py-2 outline-none focus:border-[#06B6D4] font-medium">
           <option value="all">{{ i18n.t.chat.allClusters }}</option>
-          <option value="node-us-east-01">node-us-east-01 (AWS)</option>
-          <option value="node-us-west-02">node-us-west-02 (GCP)</option>
+          <option v-for="node in registeredServers" :key="node.id" :value="node.id">
+            🎯 {{ node.hostname }} ({{ node.ip }})
+          </option>
         </select>
-        <div class="bg-[#0F172A] border border-[#1E293B] rounded-xl px-3 py-1.5 flex items-center gap-2 text-xs font-mono">
+
+        <div class="bg-[#0F172A] border border-[#1E293B] rounded-xl px-3 py-2 flex items-center gap-2 text-xs font-mono">
           <span class="w-2 h-2 rounded-full bg-[#10B981] animate-pulse"></span>
           <span class="text-[#06B6D4] font-bold">{{ llm.activeProvider.selectedModel }}</span>
         </div>
@@ -132,7 +167,8 @@ async function sendMessage() {
         :class="['flex flex-col max-w-2xl gap-1', m.sender === 'user' ? 'ml-auto items-end' : 'mr-auto items-start']"
       >
         <div class="flex items-center gap-2 text-[11px] text-[#64748B]">
-          <span class="font-bold">{{ m.sender === 'user' ? 'You' : 'AI SysAdmin Assistant' }}</span>
+          <span class="font-bold">{{ m.sender === 'user' ? 'You' : 'AI SysAdmin Agent' }}</span>
+          <span v-if="m.nodeContext" class="px-1.5 py-0.5 rounded bg-[#06B6D4]/10 text-[#06B6D4] font-mono">@{{ m.nodeContext }}</span>
           <span class="font-mono">{{ m.timestamp }}</span>
         </div>
 
@@ -152,7 +188,7 @@ async function sendMessage() {
       <div class="flex items-center justify-between text-xs">
         <span class="text-[#94A3B8] font-bold flex items-center gap-1">
           <span class="material-symbols-outlined text-sm text-[#06B6D4]">bolt</span>
-          <span>⚡ 运维 Skill 技能库 (Built-in SysAdmin Presets)</span>
+          <span>⚡ SysAdmin Agent 运维 Skill 技能库</span>
         </span>
       </div>
       <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
@@ -160,7 +196,7 @@ async function sendMessage() {
           v-for="skill in opsSkills"
           :key="skill.name"
           @click="applySkill(skill.prompt)"
-          class="px-3 py-1.5 rounded-lg bg-[#0F172A] border border-[#1E293B] hover:border-[#06B6D4] text-[#94A3B8] hover:text-[#06B6D4] whitespace-nowrap transition-all cursor-pointer font-medium"
+          class="px-3 py-1.5 rounded-xl bg-[#0F172A] border border-[#1E293B] hover:border-[#06B6D4] text-[#94A3B8] hover:text-[#06B6D4] whitespace-nowrap transition-all cursor-pointer font-medium"
         >
           {{ skill.name }}
         </button>

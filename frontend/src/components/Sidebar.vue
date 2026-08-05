@@ -9,7 +9,8 @@ const i18n = useI18nStore()
 
 const navItems = computed(() => [
   { icon: 'dashboard', label: i18n.t.nav.dashboard, page: '/dashboard' },
-  { icon: 'chat', label: i18n.t.nav.chat, page: '/chat' },
+  { icon: 'view_module', label: i18n.t.topnav.clusters, page: '/clusters' },
+  { icon: 'smart_toy', label: i18n.t.nav.chat, page: '/chat' },
   { icon: 'terminal', label: i18n.t.nav.terminal, page: '/terminal' },
   { icon: 'verified_user', label: i18n.t.nav.certificates, page: '/certificates' },
   { icon: 'settings', label: i18n.t.nav.settings, page: '/settings' },
@@ -26,40 +27,42 @@ function isActive(path: string) {
 
 <template>
   <aside class="hidden md:flex flex-col h-screen w-[240px] overflow-y-auto fixed left-0 top-0 bg-[#0F172A] border-r border-[#1E293B] z-50">
-    <!-- Logo -->
-    <div class="px-4 py-6 flex flex-col gap-2">
-      <h1 class="text-[18px] font-bold text-[#06B6D4] flex items-center gap-2">
+    <!-- Logo Header -->
+    <div class="px-5 py-6 flex flex-col gap-1.5 border-b border-[#1E293B]">
+      <h1 class="text-[17px] font-bold text-[#06B6D4] flex items-center gap-2">
         <span class="material-symbols-outlined">smart_toy</span> {{ i18n.t.logoTitle }}
       </h1>
-      <p class="text-[12px] text-[#64748B]">{{ i18n.t.missionControl }}</p>
+      <p class="text-[11px] text-[#64748B] font-medium">{{ i18n.t.missionControl }}</p>
     </div>
 
-    <!-- Navigation -->
-    <nav class="flex-1 px-2 py-2 flex flex-col gap-1">
+    <!-- Unified 6 Navigation Items -->
+    <nav class="flex-1 px-3 py-4 flex flex-col gap-1.5">
       <button
         v-for="item in navItems"
         :key="item.label"
         @click="navigateTo(item.page)"
         :class="[
-          'flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all cursor-pointer w-full text-left',
+          'flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all cursor-pointer w-full text-left',
           isActive(item.page)
-            ? 'bg-[rgba(6,182,212,0.1)] text-[#06B6D4] border-l-[3px] border-[#06B6D4]'
-            : 'text-[#94A3B8] hover:bg-[rgba(255,255,255,0.03)] hover:text-[#F1F5F9]'
+            ? 'bg-[#06B6D4]/15 text-[#06B6D4] border-l-4 border-[#06B6D4] font-bold shadow-md'
+            : 'text-[#94A3B8] hover:bg-[#1E293B] hover:text-[#F1F5F9] font-medium'
         ]"
       >
-        <span class="material-symbols-outlined text-[20px]">{{ item.icon }}</span>
-        <span class="text-[13px] font-medium">{{ item.label }}</span>
+        <span class="material-symbols-outlined text-[19px] shrink-0">{{ item.icon }}</span>
+        <span class="text-[13px] truncate">{{ item.label }}</span>
       </button>
     </nav>
 
-    <!-- Bottom Status & Copyright Attribution -->
+    <!-- Bottom Health Status & Copyright -->
     <div class="px-4 py-4 border-t border-[#1E293B] mt-auto flex flex-col gap-3">
-      <div class="bg-[#1E293B] rounded-lg p-3 flex items-center justify-between border border-[#334155]">
-        <span class="text-[11px] font-bold text-[#10B981] uppercase tracking-wide">{{ i18n.t.serverHealthOptimal }}</span>
-        <div class="w-2 h-2 rounded-full bg-[#10B981]"></div>
+      <div class="bg-[#1E293B]/70 rounded-xl p-2.5 flex items-center justify-between border border-[#334155]">
+        <span class="text-[11px] font-bold text-[#10B981] uppercase tracking-wide flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-[#10B981] animate-pulse"></span>
+          {{ i18n.t.serverHealthOptimal }}
+        </span>
       </div>
       
-      <!-- Official Creator Copyright Line -->
+      <!-- Creator Copyright Attribution Line -->
       <div class="text-[11px] text-[#64748B] font-mono text-center pt-1 border-t border-[#1E293B]/60">
         Design by <span class="text-[#06B6D4] font-bold">Moisse</span> 2026
       </div>

@@ -143,7 +143,16 @@ async function deleteServer(id: string) {
 }
 
 function goToSSH(server: Server) {
-  router.push('/terminal')
+  // Direct jump with real server query params
+  router.push({
+    path: '/terminal',
+    query: {
+      ip: server.ip,
+      host: server.hostname,
+      port: String(server.port),
+      user: server.username
+    }
+  })
 }
 
 function goToAIChat(server: Server) {
@@ -211,7 +220,6 @@ onMounted(() => {
       </div>
       <div class="bg-[#0F172A] border border-[#1E293B] rounded-xl p-4 flex flex-col gap-1">
         <span class="text-xs text-[#06B6D4] font-medium">{{ i18n.t.dashboard.uptime }}</span>
-        <!-- Corrected Uptime Logic -->
         <span class="text-2xl font-bold text-[#06B6D4]">{{ stats.total > 0 ? (stats.uptime + '%') : '0.0%' }}</span>
       </div>
     </div>
@@ -301,7 +309,7 @@ onMounted(() => {
             </div>
           </div>
 
-          <!-- Bottom Action Buttons -->
+          <!-- Bottom Action Buttons (Direct SSH Jump) -->
           <div class="flex items-center gap-2 pt-3 border-t border-[#1E293B]">
             <button @click="goToSSH(server)" class="flex-1 py-1.5 rounded-lg bg-[#1E293B] hover:bg-[#06B6D4] hover:text-[#0B1120] text-[#94A3B8] text-xs font-bold transition-all flex items-center justify-center gap-1">
               <span class="material-symbols-outlined text-sm">terminal</span> SSH

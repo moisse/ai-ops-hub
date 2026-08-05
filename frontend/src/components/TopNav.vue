@@ -1,14 +1,26 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useI18nStore } from '../stores/useI18nStore'
 
 const router = useRouter()
+const route = useRoute()
 const i18n = useI18nStore()
 const username = ref('Admin')
 
 const userInitial = computed(() => {
   return username.value ? username.value.charAt(0).toUpperCase() : 'A'
+})
+
+const breadcrumbTitle = computed(() => {
+  const path = route.path
+  if (path === '/dashboard') return i18n.currentLang === 'zh-CN' ? '仪表盘控制台' : 'Dashboard'
+  if (path === '/clusters') return i18n.currentLang === 'zh-CN' ? '集群管理' : 'Clusters'
+  if (path === '/chat') return i18n.currentLang === 'zh-CN' ? 'AI 运维助手' : 'AI Assistant'
+  if (path === '/terminal') return i18n.currentLang === 'zh-CN' ? 'SSH 终端' : 'SSH Terminal'
+  if (path === '/certificates') return i18n.currentLang === 'zh-CN' ? '证书管理' : 'Certificates'
+  if (path === '/settings') return i18n.currentLang === 'zh-CN' ? '系统设置中心' : 'Settings'
+  return i18n.currentLang === 'zh-CN' ? '控制中心' : 'Console'
 })
 
 function loadUser() {
@@ -38,17 +50,13 @@ onMounted(() => {
 
 <template>
   <nav class="hidden md:flex justify-between items-center px-8 w-full h-[56px] fixed top-0 right-0 z-40 bg-[#0B1120] border-b border-[#1E293B] pl-[260px]">
-    <!-- Left Navigation Links -->
-    <div class="flex items-center gap-6 h-full">
-      <router-link to="/dashboard" class="text-[13px] text-[#94A3B8] hover:text-[#06B6D4] transition-colors h-full flex items-center font-medium">
-        {{ i18n.t.topnav.nodes }}
-      </router-link>
-      <router-link to="/clusters" class="text-[13px] text-[#94A3B8] hover:text-[#06B6D4] transition-colors h-full flex items-center font-medium">
-        {{ i18n.t.topnav.clusters }}
-      </router-link>
-      <router-link to="/certificates" class="text-[13px] text-[#94A3B8] hover:text-[#06B6D4] transition-colors h-full flex items-center font-medium">
-        {{ i18n.t.topnav.security }}
-      </router-link>
+    <!-- Left Dynamic Route Breadcrumb -->
+    <div class="flex items-center gap-2 text-xs font-medium text-[#94A3B8]">
+      <span class="hover:text-[#F1F5F9] cursor-pointer" @click="router.push('/dashboard')">
+        {{ i18n.currentLang === 'zh-CN' ? '控制台' : 'Console' }}
+      </span>
+      <span>/</span>
+      <span class="text-[#06B6D4] font-bold">{{ breadcrumbTitle }}</span>
     </div>
 
     <!-- Right Utility Controls -->
