@@ -1,7 +1,7 @@
 {
   "name": "ai-ops-hub-backend",
-  "version": "0.1.0",
-  "description": "AI Ops Hub - 智能运维后端服务",
+  "version": "0.1.1",
+  "description": "AI Ops Hub - Backend API Server",
   "type": "module",
   "main": "src/index.js",
   "scripts": {
@@ -16,10 +16,12 @@
     "better-sqlite3": "^11.0.0",
     "ssh2": "^1.15.0",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.0",
-    "jsonwebtoken": "^9.0.2"
+    "dotenv": "^16.4.0"
   },
   "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/better-sqlite3": "^7.6.0",
+    "@types/ssh2": "^1.15.0",
     "eslint": "^9.0.0"
   }
 }

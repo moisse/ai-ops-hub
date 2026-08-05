@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 import Database from 'better-sqlite3';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import sshRoutes from './routes/ssh.js';
+import chatRoutes from './routes/chat.js';
 
 dotenv.config();
 
@@ -71,12 +73,24 @@ db.exec(`
     result TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   );
+
+  CREATE TABLE IF NOT EXISTS chat_history (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    session_id TEXT,
+    role TEXT NOT NULL,
+    content TEXT NOT NULL,
+    server_context TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
 `);
 
-// Health check
+// Routes
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
+
+app.use('/api/ssh', sshRoutes);
+app.use('/api/chat', chatRoutes);
 
 // Servers CRUD
 app.get('/api/servers', (req, res) => {
