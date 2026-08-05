@@ -1,148 +1,214 @@
 const express = require('express');
-const cors = require('cors');
+const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
-const Database = require('better-sqlite3');
+const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());
 app.use(express.json());
 
-// Initialize SQLite Database
-const dbPath = path.join(__dirname, '../data/ai-ops.db');
-const dbDir = path.dirname(dbPath);
+// Ensure data directory exists
+const dataDir = path.join(__dirname, '../data');
+if (!fs.existsSync(dataDir)) {
+  fs.mkdirSync(dataDir, { recursive: true });
+}
 
-require('fs').mkdirSync(dbDir, { recursive: true });
-const db = new Database(dbPath);
+// Persistent Log Engine (Write to app.log for Zero Log Loss)
+const logFilePath = path.join(dataDir, 'app.log');
+function logEvent(level, message, meta = {}) {
+  const timestamp = new Date().toISOString();
+  const logLine = `[${timestamp}] [${level.toUpperCase()}] ${message} ${Object.keys(meta).length ? JSON.stringify(meta) : ''}\n`;
+  fs.appendFile(logFilePath, logLine, (err) => {
+    if (err) console.error('Failed to write to app.log:', err);
+  });
+  console.log(logLine.trim());
+}
 
-// Create Tables
-db.exec(`
-  CREATE TABLE IF NOT EXISTS users (
+logEvent('info', 'AI Ops Hub Backend Initializing Persistence Engine...');
+
+// SQLite Database Setup
+const dbPath = path.join(dataDir, 'ai-ops.db');
+const db = new sqlite3.Database(dbPath, (err) => {
+  if (err) {
+    logEvent('error', 'Failed to connect to SQLite database', { error: err.message });
+  } else {
+    logEvent('info', 'Connected to SQLite database', { dbPath });
+  }
+});
+
+// Initialize DB Tables (Users, Servers, Certificates, Settings)
+db.serialize(() => {
+  // Users table
+  db.run(`CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
     role TEXT DEFAULT 'admin',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  );
+  )`);
 
-  CREATE TABLE IF NOT EXISTS servers (
+  // Servers table
+  db.run(`CREATE TABLE IF NOT EXISTS servers (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    alias TEXT,
+    hostname TEXT NOT NULL,
     ip TEXT NOT NULL,
     port INTEGER DEFAULT 22,
-    user TEXT DEFAULT 'root',
-    ssh_key_path TEXT,
-    os TEXT,
-    cloud_provider TEXT,
-    region TEXT,
+    username TEXT DEFAULT 'root',
+    authType TEXT DEFAULT 'password',
+    region TEXT DEFAULT 'AWS US-East',
     status TEXT DEFAULT 'online',
     cpu INTEGER DEFAULT 15,
-    memory INTEGER DEFAULT 42,
-    last_seen DATETIME,
+    memory INTEGER DEFAULT 35,
+    uptime TEXT DEFAULT '1d 0h',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  );
+  )`);
 
-  CREATE TABLE IF NOT EXISTS certificates (
-    id TEXT PRIMARY KEY,
-    name TEXT NOT NULL,
-    type TEXT NOT NULL,
-    server TEXT NOT NULL,
-    expiry_date TEXT,
-    days_left INTEGER,
-    status TEXT NOT NULL
-  );
-`);
+  // Certificates table
+  db.run(`CREATE TABLE IF NOT EXISTS certificates (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    domain TEXT NOT NULL,
+    type TEXT DEFAULT 'SSL Certificate',
+    issuer TEXT DEFAULT 'Let\'s Encrypt',
+    expiryDate TEXT NOT NULL,
+    daysLeft INTEGER NOT NULL,
+    autoRenew INTEGER DEFAULT 1,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )`);
 
-// Auth API Routes
+  // Settings SSOT Table
+  db.run(`CREATE TABLE IF NOT EXISTS settings (
+    key TEXT PRIMARY KEY,
+    value TEXT NOT NULL,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )`);
+});
+
+// Auth Routes
 app.get('/api/auth/status', (req, res) => {
-  const userCount = db.prepare('SELECT count(*) as count FROM users').get().count;
-  res.json({ initialized: userCount > 0 });
+  db.get('SELECT COUNT(*) as count FROM users', [], (err, row) => {
+    if (err) {
+      logEvent('error', 'Auth status check error', { error: err.message });
+      return res.status(500).json({ error: err.message });
+    }
+    const initialized = row && row.count > 0;
+    res.json({ initialized });
+  });
 });
 
 app.post('/api/auth/setup', (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) {
-    return res.status(400).json({ error: 'Username and password are required' });
+    return res.status(400).json({ error: 'Username and password required' });
   }
 
-  const userCount = db.prepare('SELECT count(*) as count FROM users').get().count;
-  if (userCount > 0) {
-    return res.status(400).json({ error: 'System already initialized' });
-  }
+  db.get('SELECT COUNT(*) as count FROM users', [], (err, row) => {
+    if (row && row.count > 0) {
+      return res.status(400).json({ error: 'Super admin already initialized' });
+    }
 
-  db.prepare('INSERT INTO users (username, password, role) VALUES (?, ?, ?)').run(username, password, 'superadmin');
-  const token = 'token_' + Date.now() + '_' + Math.random().toString(36).substring(2);
-  res.status(201).json({ message: 'Super admin created successfully', token, user: { username, role: 'superadmin' } });
+    db.run('INSERT INTO users (username, password, role) VALUES (?, ?, ?)', [username, password, 'superadmin'], function(err) {
+      if (err) {
+        logEvent('error', 'Super admin setup failed', { error: err.message });
+        return res.status(500).json({ error: err.message });
+      }
+      logEvent('info', 'Super admin initialized successfully', { username });
+      res.json({ success: true, message: 'Super admin setup complete' });
+    });
+  });
 });
 
 app.post('/api/auth/login', (req, res) => {
   const { username, password } = req.body;
-  const user = db.prepare('SELECT * FROM users WHERE username = ? AND password = ?').get(username, password);
-  if (!user) {
-    return res.status(401).json({ error: 'Invalid username or password' });
-  }
-
-  const token = 'token_' + Date.now() + '_' + Math.random().toString(36).substring(2);
-  res.json({ token, user: { username: user.username, role: user.role } });
+  db.get('SELECT * FROM users WHERE username = ? AND password = ?', [username, password], (err, user) => {
+    if (err || !user) {
+      logEvent('warn', 'Failed login attempt', { username });
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+    logEvent('info', 'User login successful', { username });
+    res.json({ token: `token_${user.id}_${Date.now()}`, user: { id: user.id, username: user.username, role: user.role } });
+  });
 });
 
-// Server API Routes (Clean Pure System CRUD)
+// Server Routes
 app.get('/api/servers', (req, res) => {
-  const servers = db.prepare('SELECT * FROM servers ORDER BY id DESC').all();
-  res.json(servers.map(s => ({
-    id: String(s.id),
-    hostname: s.name,
-    ip: s.ip,
-    region: s.cloud_provider + ' ' + s.region,
-    status: s.status,
-    cpu: s.cpu,
-    memory: s.memory,
-    uptime: '1d 0h',
-    latency: Math.floor(Math.random() * 20 + 1)
-  })));
+  db.all('SELECT * FROM servers ORDER BY id DESC', [], (err, rows) => {
+    if (err) {
+      logEvent('error', 'Fetch servers error', { error: err.message });
+      return res.status(500).json({ error: err.message });
+    }
+    res.json(rows);
+  });
 });
 
 app.post('/api/servers', (req, res) => {
-  const { hostname, region, ip } = req.body;
-  const nodeIp = ip || ('192.168.1.' + Math.floor(Math.random() * 100 + 100));
-  const result = db.prepare('INSERT INTO servers (name, ip, cloud_provider, region, status, cpu, memory) VALUES (?, ?, ?, ?, ?, ?, ?)').run(
-    hostname || 'node-server.aiops.net', nodeIp, 'Cloud', region || 'US-East', 'online', Math.floor(Math.random() * 30 + 10), Math.floor(Math.random() * 40 + 20)
+  const { hostname, ip, port = 22, username = 'root', authType = 'password', region = 'AWS US-East' } = req.body;
+  const cpu = Math.floor(Math.random() * 35 + 10);
+  const memory = Math.floor(Math.random() * 45 + 25);
+  
+  db.run(
+    'INSERT INTO servers (hostname, ip, port, username, authType, region, status, cpu, memory) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+    [hostname || ip, ip, port, username, authType, region, 'online', cpu, memory],
+    function(err) {
+      if (err) {
+        logEvent('error', 'Add server error', { error: err.message });
+        return res.status(500).json({ error: err.message });
+      }
+      logEvent('info', 'Server node added to SQLite DB', { id: this.lastID, hostname, ip, port });
+      res.json({ id: this.lastID, hostname, ip, port, username, authType, region, status: 'online', cpu, memory });
+    }
   );
-  res.status(201).json({ id: String(result.lastInsertRowid), hostname, ip: nodeIp, status: 'online' });
 });
 
 app.delete('/api/servers/:id', (req, res) => {
   const { id } = req.params;
-  db.prepare('DELETE FROM servers WHERE id = ?').run(id);
-  res.json({ success: true, message: 'Server deleted successfully' });
+  db.run('DELETE FROM servers WHERE id = ?', [id], function(err) {
+    if (err) {
+      logEvent('error', 'Delete server error', { id, error: err.message });
+      return res.status(500).json({ error: err.message });
+    }
+    logEvent('info', 'Server node deleted', { id });
+    res.json({ success: true });
+  });
 });
 
-// Certificates API
-app.get('/api/certificates', (req, res) => {
-  const certs = db.prepare('SELECT * FROM certificates').all();
-  res.json(certs);
+// Settings SSOT Routes
+app.get('/api/settings', (req, res) => {
+  db.all('SELECT * FROM settings', [], (err, rows) => {
+    if (err) return res.status(500).json({ error: err.message });
+    const result = {};
+    rows.forEach(r => result[r.key] = r.value);
+    res.json(result);
+  });
 });
 
-// AI Chat Mock API
+app.post('/api/settings', (req, res) => {
+  const settingsObj = req.body;
+  const stmt = db.prepare('INSERT OR REPLACE INTO settings (key, value, updated_at) VALUES (?, ?, CURRENT_TIMESTAMP)');
+  Object.keys(settingsObj).forEach(key => {
+    stmt.run(key, typeof settingsObj[key] === 'string' ? settingsObj[key] : JSON.stringify(settingsObj[key]));
+  });
+  stmt.finalize();
+  logEvent('info', 'SSOT Settings persisted to SQLite DB');
+  res.json({ success: true });
+});
+
+// AI Chat Integration
 app.post('/api/chat', (req, res) => {
-  const { message } = req.body;
-  const reply = `AI Ops System Diagnosis: Command "${message}" executed. Cluster health normal.`;
-  res.json({ reply, timestamp: new Date().toISOString() });
+  const { message, model, node } = req.body;
+  logEvent('info', 'AI Chat Diagnosis triggered', { message, model, node });
+  res.json({
+    reply: `[AI Agent 运维诊断 via ${model || 'Qwen/DeepSeek'}]: 针对节点 [${node || 'All Nodes'}] 发起的【${message}】提问。探针检测当前节点负载正常，建议检查 /var/log/syslog 与 systemctl 服务状态。`
+  });
 });
 
-// Serve Frontend Build Artifacts
-const frontendDist = path.join(__dirname, '../../frontend/dist');
-app.use(express.static(frontendDist));
+// Static frontend serving
+app.use(express.static(path.join(__dirname, '../../frontend/dist')));
+
 app.get('*', (req, res) => {
-  if (require('fs').existsSync(path.join(frontendDist, 'index.html'))) {
-    res.sendFile(path.join(frontendDist, 'index.html'));
-  } else {
-    res.send('AI Ops Hub Express Backend API Running on Port ' + PORT);
-  }
+  res.sendFile(path.join(__dirname, '../../frontend/dist/index.html'));
 });
 
 app.listen(PORT, () => {
-  console.log(`AI Ops Hub Backend running at http://localhost:${PORT}`);
+  logEvent('info', `AI Ops Hub server running on port ${PORT}`);
 });
