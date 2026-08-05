@@ -36,12 +36,12 @@
 - [x] **Web SSH Terminal 命令行**: 实现打字输入 `top`, `status`, `ping`, `uname`, `help`, `clear` 并在屏幕追加彩色命令日志。
 - [x] **Dashboard 动态 Modal**: 实现 `Add Server` 模态弹窗与 `AIOpsDB` 数据库动态增删查改。
 
-### 11. 纯净系统初始化 & UI 重叠修复 & 著作权标识完结 (2026-08-06 00:38)
-- [x] **全剥离设计搞遗留 Seed 数据**: 彻底删除了后端 `backend/src/index.js` 中硬编码的 5 台示例节点与证书数据。
-- [x] **优雅纯净空状态 (`Dashboard.vue` & `Certificates.vue`)**: 系统首次部署初始化后呈现 100% 纯净空状态卡片，支持用户添加、删除节点。
-- [x] ** TopNav 遮挡修补 (`TopNav.vue`)**: 调整顶栏间距 `pl-[260px]`，彻底解决了 `Nodes` 被 `240px` 侧边栏遮挡的问题。
-- [x] **动态用户头像首字母**: 从 `localStorage` 解析 `username`，动态大写提取（如 `admin` 渲染 `A`）。
-- [x] **植入创始人著作权标识 (`Sidebar.vue`)**: 侧边栏底部清晰嵌入 `Design by Moisse 2026 | AI Ops Hub` 版权说明。
+### 12. 0 节点在线率数理修正 & Cherry Studio 大模型中心 & DevOps SRE 技能库全线上线 (2026-08-06 00:44)
+- [x] **0 节点在线率数理严谨修正 (`Dashboard.vue`)**: 彻底消除了服务器总数为 0 时在线率显示 100% 的逻辑 Bug，当 `total === 0` 时严谨输出 `0.0%`。
+- [x] **专业 SSH 凭据添加弹窗 (`Dashboard.vue`)**: 支持配置 `Hostname`、`IP`、`SSH 端口 (默认 22)`、`用户名 (root/ubuntu)`、`鉴权类型 (密码 Password vs SSH 私钥 Private Key)`，并集成 `[🔗 测试 SSH 连通性]` 探针。
+- [x] **Cherry Studio 风格大模型配置中心 (`Settings.vue` & `useLLMStore.ts`)**: 适配通义千问 Qwen、DeepSeek、智谱 GLM、月之暗面 Kimi、豆包、OpenAI、Claude、Gemini、Ollama，支持 API Key 测试探针、模型下拉选择与系统默认连通性常驻指示灯。
+- [x] **内置 DevOps SRE 运维 Skill 提示词库 (`AIChat.vue`)**: 为 AI 诊断助手注入专业 SysAdmin 系统运维提示词，并提供 CPU/内存泄漏排查、Docker 崩盘诊断、SSL 自动续期脚本一键加载预设。
+- [x] **证书防护与 Web SSH 终端弹窗 (`Certificates.vue` & `Terminal.vue`)**: 增加 `[+ 添加证书/密钥防护]` 与 `[+ 新建 Web SSH 连线]` 弹窗，支持开多 SSH 会话标签。
 
 ---
 
