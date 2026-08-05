@@ -2,8 +2,6 @@ import { Router } from 'express';
 import { Client } from 'ssh2';
 
 const router = Router();
-
-// SSH 连接池（简化版，生产环境应使用连接池管理）
 const connections = new Map();
 
 router.post('/connect', (req, res) => {
@@ -24,7 +22,7 @@ router.post('/connect', (req, res) => {
     res.status(500).json({ success: false, error: err.message });
   });
 
-  const connectConfig: any = {
+  const connectConfig = {
     host,
     port: port || 22,
     username,
