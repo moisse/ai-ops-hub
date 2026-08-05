@@ -36,11 +36,11 @@
 - [x] **Web SSH Terminal 命令行**: 实现打字输入 `top`, `status`, `ping`, `uname`, `help`, `clear` 并在屏幕追加彩色命令日志。
 - [x] **Dashboard 动态 Modal**: 实现 `Add Server` 模态弹窗与 `AIOpsDB` 数据库动态增删查改。
 
-### 5. GCP 云服务器 SSH 直连与全栈服务完美复活 (2026-08-06 00:17)
-- [x] **捕获与修复 SQLite 列名兼容报错**: 定位到了原先 SQLite 报错 `table servers has no column named hostname`，在 `backend/src/index.js` 中补齐了针对已有数据库表的平滑兼容逻辑。
-- [x] **完成 Vite 前端预编译构建**: 通过 SSH 直连 GCP 服务器 (`34.136.76.211`)，执行 `npx vite build` 重新预编译打出了无损生产包（生成 `dist/assets/index-D9ZdUQfx.js`）。
-- [x] **运行 Node Express 生产级后台服务**: 成功挂载 `express.static()` 并启动 Express 服务，彻底替代了测试阶段脆弱的 `vite preview`。
-- [x] **API 健康检查 100% 连通**: 验证 `http://34.136.76.211:3000/api/health` 接口，返回 `{"status":"ok","timestamp":"2026-08-05T16:17:18.438Z"}`，后端 API 与数据库全线连通！
+### 5. 全栈部署与 systemd 常驻完结里程碑 (2026-08-06 00:19)
+- [x] **systemd 常驻守护生效**: `ai-ops-hub.service` 状态置为 `active (running)`，实现 GCP 服务器开机自启与崩溃 5s 内自动拉起。
+- [x] **后端 API & SQLite 数据解封**: Express + SQLite 连通，5 台种子节点（AWS/GCP/Aliyun/Tencent/Azure）与 4 张 SSL 证书数据填充完毕。
+- [x] **Tailwind CSS 编译修补**: 样式包由 1.16KB 预编译扩充至 17.83KB，完全载入赛博朋克深空黑 Design System。
+- [x] **外部 HTTP 200 验证**: 线上服务 `http://34.136.76.211:3000/` 响应正常，完成全栈交接。
 
 ---
 
