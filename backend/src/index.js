@@ -100,7 +100,12 @@ function initSqliteTables() {
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
 
-    // FIX: Escape single quote in DEFAULT 'Lets Encrypt'
+    // Dynamic schema migrations for existing SQLite tables
+    db.run("ALTER TABLE servers ADD COLUMN hostname TEXT", () => {});
+    db.run("ALTER TABLE servers ADD COLUMN port INTEGER DEFAULT 22", () => {});
+    db.run("ALTER TABLE servers ADD COLUMN username TEXT DEFAULT 'root'", () => {});
+    db.run("ALTER TABLE servers ADD COLUMN authType TEXT DEFAULT 'password'", () => {});
+
     db.run(`CREATE TABLE IF NOT EXISTS certificates (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       domain TEXT NOT NULL,
