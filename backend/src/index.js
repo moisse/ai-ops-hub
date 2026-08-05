@@ -1,30 +1,31 @@
-import express from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import Database from 'better-sqlite3';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import sshRoutes from './routes/ssh.js';
-import chatRoutes from './routes/chat.js';
-
-dotenv.config();
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const express = require('express');
+const cors = require('cors');
+const path = require('path');
+const Database = require('better-sqlite3');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Database
+// Initialize SQLite Database
 const dbPath = path.join(__dirname, '../data/ai-ops.db');
+const dbDir = path.dirname(dbPath);
+
+require('fs').mkdirSync(dbDir, { recursive: true });
 const db = new Database(dbPath);
 
-// Initialize tables
+// Create Tables
 db.exec(`
+  CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT UNIQUE NOT NULL,
+    password TEXT NOT NULL,
+    role TEXT DEFAULT 'admin',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+
   CREATE TABLE IF NOT EXISTS servers (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -36,131 +37,127 @@ db.exec(`
     os TEXT,
     cloud_provider TEXT,
     region TEXT,
-    status TEXT DEFAULT 'unknown',
+    status TEXT DEFAULT 'online',
+    cpu INTEGER DEFAULT 15,
+    memory INTEGER DEFAULT 42,
     last_seen DATETIME,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   );
 
-  CREATE TABLE IF NOT EXISTS services (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    server_id INTEGER REFERENCES servers(id),
-    name TEXT NOT NULL,
-    type TEXT,
-    port INTEGER,
-    status TEXT DEFAULT 'unknown',
-    last_check DATETIME,
-    UNIQUE(server_id, name)
-  );
-
   CREATE TABLE IF NOT EXISTS certificates (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    server_id INTEGER REFERENCES servers(id),
-    type TEXT NOT NULL,
+    id TEXT PRIMARY KEY,
     name TEXT NOT NULL,
-    path TEXT,
-    expiry_date DATETIME,
-    days_remaining INTEGER,
-    notified BOOLEAN DEFAULT 0,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  );
-
-  CREATE TABLE IF NOT EXISTS audit_log (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    server_id INTEGER REFERENCES servers(id),
-    user TEXT NOT NULL,
-    action TEXT NOT NULL,
-    command TEXT,
-    result TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  );
-
-  CREATE TABLE IF NOT EXISTS chat_history (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    session_id TEXT,
-    role TEXT NOT NULL,
-    content TEXT NOT NULL,
-    server_context TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    type TEXT NOT NULL,
+    server TEXT NOT NULL,
+    expiry_date TEXT,
+    days_left INTEGER,
+    status TEXT NOT NULL
   );
 `);
 
-// Routes
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+// Check and Seed Initial Data
+try {
+  const serverCount = db.prepare('SELECT count(*) as count FROM servers').get().count;
+  if (serverCount === 0) {
+    const insertServer = db.prepare('INSERT INTO servers (name, ip, cloud_provider, region, status, cpu, memory) VALUES (?, ?, ?, ?, ?, ?, ?)');
+    insertServer.run('node-us-east-01.aiops.net', '192.168.1.101', 'AWS', 'US-East', 'online', 12, 45);
+    insertServer.run('node-us-west-02.aiops.net', '192.168.1.102', 'GCP', 'US-West', 'online', 28, 62);
+    insertServer.run('node-eu-west-01.aiops.net', '192.168.1.103', 'Tencent', 'EU-West', 'warning', 89, 92);
+    insertServer.run('node-ap-east-01.aiops.net', '192.168.1.104', 'Aliyun', 'AP-East', 'online', 35, 54);
+    insertServer.run('node-eu-central-03.aiops.net', '192.168.1.105', 'Azure', 'EU-Central', 'offline', 0, 0);
+
+    const insertCert = db.prepare('INSERT INTO certificates (id, name, type, server, expiry_date, days_left, status) VALUES (?, ?, ?, ?, ?, ?, ?)');
+    insertCert.run('c1', 'SSH Key (GCP-US-West)', 'SSH Key', 'Server 01', '-', null, 'Normal');
+    insertCert.run('c2', 'SSL (*.example.com)', 'SSL Certificate', 'Prod-01', '2026-06-30', -36, 'Expired');
+    insertCert.run('c3', 'Domain (example.com)', 'Domain', 'Prod-01', '2027-03-15', 222, 'Normal');
+    insertCert.run('c4', 'SSL (api.example.com)', 'SSL Certificate', 'Prod-02', '2026-09-15', 41, 'Expiring');
+  }
+} catch (e) {
+  console.warn('SQLite seed error:', e.message);
+}
+
+// Auth API Routes
+app.get('/api/auth/status', (req, res) => {
+  const userCount = db.prepare('SELECT count(*) as count FROM users').get().count;
+  res.json({ initialized: userCount > 0 });
 });
 
-app.use('/api/ssh', sshRoutes);
-app.use('/api/chat', chatRoutes);
+app.post('/api/auth/setup', (req, res) => {
+  const { username, password } = req.body;
+  if (!username || !password) {
+    return res.status(400).json({ error: 'Username and password are required' });
+  }
 
-// Servers CRUD
+  const userCount = db.prepare('SELECT count(*) as count FROM users').get().count;
+  if (userCount > 0) {
+    return res.status(400).json({ error: 'System already initialized' });
+  }
+
+  db.prepare('INSERT INTO users (username, password, role) VALUES (?, ?, ?)').run(username, password, 'superadmin');
+  const token = 'token_' + Date.now() + '_' + Math.random().toString(36).substring(2);
+  res.status(201).json({ message: 'Super admin created successfully', token, user: { username, role: 'superadmin' } });
+});
+
+app.post('/api/auth/login', (req, res) => {
+  const { username, password } = req.body;
+  const user = db.prepare('SELECT * FROM users WHERE username = ? AND password = ?').get(username, password);
+  if (!user) {
+    return res.status(401).json({ error: 'Invalid username or password' });
+  }
+
+  const token = 'token_' + Date.now() + '_' + Math.random().toString(36).substring(2);
+  res.json({ token, user: { username: user.username, role: user.role } });
+});
+
+// Server API Routes
 app.get('/api/servers', (req, res) => {
-  const servers = db.prepare('SELECT * FROM servers ORDER BY created_at DESC').all();
-  res.json(servers);
+  const servers = db.prepare('SELECT * FROM servers ORDER BY id').all();
+  res.json(servers.map(s => ({
+    id: String(s.id),
+    hostname: s.name,
+    ip: s.ip,
+    region: s.cloud_provider + ' ' + s.region,
+    status: s.status,
+    cpu: s.cpu,
+    memory: s.memory,
+    uptime: '45d 2h',
+    latency: Math.floor(Math.random() * 20 + 1)
+  })));
 });
 
 app.post('/api/servers', (req, res) => {
-  const { name, alias, ip, port, user, os, cloud_provider, region } = req.body;
-  const stmt = db.prepare(`
-    INSERT INTO servers (name, alias, ip, port, user, os, cloud_provider, region)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-  `);
-  const result = stmt.run(name, alias, ip, port || 22, user || 'root', os, cloud_provider, region);
-  res.json({ id: result.lastInsertRowid, ...req.body });
+  const { hostname, region } = req.body;
+  const ip = '192.168.1.' + Math.floor(Math.random() * 100 + 100);
+  const result = db.prepare('INSERT INTO servers (name, ip, cloud_provider, region, status) VALUES (?, ?, ?, ?, ?)').run(
+    hostname || 'node-new.aiops.net', ip, 'Cloud', region || 'US-East', 'online'
+  );
+  res.status(201).json({ id: String(result.lastInsertRowid), hostname, ip, status: 'online' });
 });
 
-app.get('/api/servers/:id', (req, res) => {
-  const server = db.prepare('SELECT * FROM servers WHERE id = ?').get(req.params.id);
-  if (!server) return res.status(404).json({ error: 'Server not found' });
-  res.json(server);
-});
-
-app.put('/api/servers/:id', (req, res) => {
-  const { name, alias, ip, port, user, os, cloud_provider, region, status } = req.body;
-  const stmt = db.prepare(`
-    UPDATE servers SET name=?, alias=?, ip=?, port=?, user=?, os=?, cloud_provider=?, region=?, status=?, last_seen=CURRENT_TIMESTAMP
-    WHERE id=?
-  `);
-  stmt.run(name, alias, ip, port, user, os, cloud_provider, region, status, req.params.id);
-  res.json({ id: req.params.id, ...req.body });
-});
-
-app.delete('/api/servers/:id', (req, res) => {
-  db.prepare('DELETE FROM servers WHERE id = ?').run(req.params.id);
-  res.json({ success: true });
-});
-
-// Services
-app.get('/api/servers/:id/services', (req, res) => {
-  const services = db.prepare('SELECT * FROM services WHERE server_id = ?').all(req.params.id);
-  res.json(services);
-});
-
-// Certificates
+// Certificates API
 app.get('/api/certificates', (req, res) => {
-  const certs = db.prepare('SELECT * FROM certificates ORDER BY expiry_date ASC').all();
+  const certs = db.prepare('SELECT * FROM certificates').all();
   res.json(certs);
 });
 
-app.get('/api/certificates/expiring', (req, res) => {
-  const certs = db.prepare('SELECT * FROM certificates WHERE days_remaining <= 30 AND days_remaining > 0 ORDER BY days_remaining ASC').all();
-  res.json(certs);
+// AI Chat Mock API
+app.post('/api/chat', (req, res) => {
+  const { message } = req.body;
+  const reply = `AI Ops System Diagnosis: Command "${message}" executed successfully. Node health is normal.`;
+  res.json({ reply, timestamp: new Date().toISOString() });
 });
 
-// Audit log
-app.get('/api/audit-log', (req, res) => {
-  const logs = db.prepare('SELECT * FROM audit_log ORDER BY created_at DESC LIMIT 100').all();
-  res.json(logs);
+// Serve Frontend Build Artifacts
+const frontendDist = path.join(__dirname, '../../frontend/dist');
+app.use(express.static(frontendDist));
+app.get('*', (req, res) => {
+  if (require('fs').existsSync(path.join(frontendDist, 'index.html'))) {
+    res.sendFile(path.join(frontendDist, 'index.html'));
+  } else {
+    res.send('AI Ops Hub Express Backend API Running on Port ' + PORT);
+  }
 });
 
 app.listen(PORT, () => {
-  console.log(`AI Ops Hub API running on http://localhost:${PORT}`);
-});
-
-// Serve frontend static files
-const frontendDist = path.join(__dirname, '../../frontend/dist');
-app.use(express.static(frontendDist));
-
-// SPA fallback
-app.get('*', (req, res) => {
-  res.sendFile(path.join(frontendDist, 'index.html'));
+  console.log(`AI Ops Hub Backend running at http://localhost:${PORT}`);
 });

@@ -1,7 +1,15 @@
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
 import { useI18nStore } from '../stores/useI18nStore'
 
+const router = useRouter()
 const i18n = useI18nStore()
+
+function handleLogout() {
+  localStorage.removeItem('ai_ops_token')
+  localStorage.removeItem('ai_ops_user')
+  router.push('/login')
+}
 </script>
 
 <template>
@@ -25,11 +33,8 @@ const i18n = useI18nStore()
         <span>{{ i18n.currentLang === 'zh-CN' ? '中文' : 'EN' }}</span>
       </button>
 
-      <button class="text-[#94A3B8] hover:text-[#06B6D4] transition-colors">
-        <span class="material-symbols-outlined">notifications</span>
-      </button>
-      <button class="text-[#94A3B8] hover:text-[#06B6D4] transition-colors">
-        <span class="material-symbols-outlined">help</span>
+      <button @click="handleLogout" class="text-[#94A3B8] hover:text-[#EF4444] transition-colors flex items-center gap-1 text-xs font-bold" title="退出登录">
+        <span class="material-symbols-outlined text-sm">logout</span>
       </button>
       <router-link to="/settings" class="w-8 h-8 rounded-full border border-[#334155] bg-[#1E293B] flex items-center justify-center cursor-pointer hover:border-[#06B6D4]">
         <span class="text-[12px] font-bold text-[#06B6D4]">M</span>
