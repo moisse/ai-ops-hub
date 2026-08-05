@@ -1,108 +1,159 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useI18nStore } from '../stores/useI18nStore'
 
-const servers = ref([
-  { id: 1, name: 'GCP-US-West', ip: '192.168.1.100', status: 'online' },
-  { id: 2, name: 'AWS-EU-Central', ip: '192.168.1.101', status: 'online' },
-  { id: 3, name: 'Azure-HK', ip: '192.168.1.102', status: 'warning' },
+const i18n = useI18nStore()
+
+interface Tab {
+  id: string;
+  name: string;
+  ip: string;
+  active: boolean;
+}
+
+const tabs = ref<Tab[]>([
+  { id: '1', name: 'node-us-east-01.aiops.net', ip: '192.168.1.101', active: true },
+  { id: '2', name: 'node-us-west-02.aiops.net', ip: '192.168.1.102', active: false }
 ])
 
-const tabs = ref([
-  { id: 1, name: 'GCP-US-West', status: 'online' },
+const activeTab = ref(tabs.value[0])
+
+const commandInput = ref('')
+const terminalLogs = ref([
+  { text: 'Connecting to node-us-east-01.aiops.net [192.168.1.101:22]...', color: 'text-[#94A3B8]' },
+  { text: 'Connection established. Welcome to Ubuntu 26.04 LTS (GNU/Linux 6.8.0 x86_64)', color: 'text-[#10B981]' },
+  { text: 'AI Ops Hub Integrated Web SSH Session v1.0.0', color: 'text-[#06B6D4]' },
+  { text: 'Type "help", "top", "status", "ping", "uname" or "clear" to execute commands.', color: 'text-[#64748B]' },
+  { text: 'moisse@node-us-east-01:~$ ', color: 'text-[#F1F5F9]' }
 ])
 
-const activeTab = ref(1)
+function selectTab(tab: Tab) {
+  tabs.value.forEach(t => t.active = (t.id === tab.id))
+  activeTab.value = tab
+  terminalLogs.value.push({
+    text: `Switched SSH session context to [${tab.name}]`,
+    color: 'text-[#06B6D4]'
+  })
+}
+
+function closeTab(tab: Tab) {
+  if (tabs.value.length <= 1) return
+  tabs.value = tabs.value.filter(t => t.id !== tab.id)
+  if (tab.active) {
+    selectTab(tabs.value[0])
+  }
+}
+
+function addTab() {
+  const newId = String(Date.now())
+  const newTab: Tab = {
+    id: newId,
+    name: `node-new-${tabs.value.length + 1}.aiops.net`,
+    ip: `192.168.1.10${tabs.value.length + 1}`,
+    active: false
+  }
+  tabs.value.push(newTab)
+  selectTab(newTab)
+}
+
+function handleCommand() {
+  const cmd = commandInput.value.trim()
+  if (!cmd) return
+
+  // Echo user command
+  terminalLogs.value.push({
+    text: `moisse@${activeTab.value.name.split('.')[0]}:~$ ${cmd}`,
+    color: 'text-[#F1F5F9]'
+  })
+
+  commandInput.value = ''
+
+  // Output mock execution
+  if (cmd === 'clear') {
+    terminalLogs.value = []
+    return
+  }
+
+  if (cmd === 'help') {
+    terminalLogs.value.push({ text: 'Available SSH Commands: top, status, ping, uname, uptime, clear, help', color: 'text-[#06B6D4]' })
+  } else if (cmd === 'top' || cmd === 'status') {
+    terminalLogs.value.push({ text: '[CPU Usage]: 12.4%  [MEM Used]: 2.1GB / 8.0GB (26.2%)  [Tasks]: 142 total, 1 running', color: 'text-[#10B981]' })
+  } else if (cmd === 'ping') {
+    terminalLogs.value.push({ text: '64 bytes from 34.136.76.211: icmp_seq=1 ttl=64 time=1.24 ms', color: 'text-[#10B981]' })
+  } else if (cmd === 'uname') {
+    terminalLogs.value.push({ text: 'Linux node-us-east-01 6.8.0-31-generic #31-Ubuntu SMP x86_64 GNU/Linux', color: 'text-[#94A3B8]' })
+  } else {
+    terminalLogs.value.push({ text: `bash: command not found: ${cmd}. Type "help" for command list.`, color: 'text-[#EF4444]' })
+  }
+}
 </script>
 
 <template>
-  <div class="flex h-[calc(100vh-56px)]">
-    <!-- Left: Server List -->
-    <aside class="w-[220px] bg-[#0F172A] border-r border-[#1E293B] flex flex-col">
-      <div class="px-3 py-4">
-        <div class="text-[12px] font-bold text-[#64748B] uppercase mb-2">Quick Connect</div>
-        <button
-          v-for="server in servers"
-          :key="server.id"
-          class="w-full h-11 px-3 rounded-lg flex items-center gap-2 hover:bg-[rgba(255,255,255,0.03)] transition-all mb-1"
-        >
-          <div :class="['w-1.5 h-1.5 rounded-full', server.status === 'online' ? 'bg-[#10B981]' : 'bg-[#F59E0B]']"></div>
-          <div class="flex-1 text-left">
-            <div class="text-[13px] text-[#F1F5F9]">{{ server.name }}</div>
-            <div class="text-[11px] text-[#64748B]">{{ server.ip }}</div>
-          </div>
-        </button>
+  <div class="flex flex-col h-[calc(100vh-56px)] max-w-7xl mx-auto w-full p-4 md:p-6 gap-4">
+    <!-- Header -->
+    <div class="flex items-center justify-between border-b border-[#1E293B] pb-3">
+      <div>
+        <h1 class="text-xl font-bold text-[#F1F5F9]">{{ i18n.t.terminal.title }}</h1>
+        <p class="text-xs text-[#94A3B8] mt-1">{{ i18n.t.terminal.subtitle }}</p>
       </div>
 
-      <div class="px-3 py-4 border-t border-[#1E293B]">
-        <div class="text-[12px] font-bold text-[#64748B] uppercase mb-2">Favorites</div>
-        <div class="text-[13px] text-[#64748B] italic">No favorites yet</div>
-      </div>
+      <button 
+        @click="addTab" 
+        class="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#1E293B] border border-[#334155] text-xs font-bold text-[#06B6D4] hover:border-[#06B6D4] transition-all cursor-pointer"
+      >
+        <span class="material-symbols-outlined text-sm">add</span>
+        <span>New SSH Session</span>
+      </button>
+    </div>
 
-      <div class="px-3 py-4 border-t border-[#1E293B]">
-        <div class="text-[12px] font-bold text-[#64748B] uppercase mb-2">Recent</div>
-        <div class="text-[13px] text-[#64748B] italic">No recent connections</div>
-      </div>
-    </aside>
-
-    <!-- Right: Terminal Area -->
-    <div class="flex-1 flex flex-col">
-      <!-- Tab Bar -->
-      <div class="h-9 bg-[#0F172A] border-b border-[#1E293B] flex items-center px-2 gap-1">
+    <!-- Terminal Window Component -->
+    <div class="flex-1 bg-[#090D16] border border-[#1E293B] rounded-2xl flex flex-col overflow-hidden shadow-2xl">
+      <!-- Tabs Bar -->
+      <div class="flex items-center bg-[#0F172A] border-b border-[#1E293B] px-2 pt-2 gap-1 overflow-x-auto">
         <div
           v-for="tab in tabs"
           :key="tab.id"
+          @click="selectTab(tab)"
           :class="[
-            'h-8 px-3 rounded-t-lg flex items-center gap-2 cursor-pointer transition-all',
-            activeTab === tab.id
-              ? 'bg-[#111827] text-[#F1F5F9] border-b-2 border-[#06B6D4]'
-              : 'text-[#94A3B8] hover:bg-[rgba(255,255,255,0.03)]'
+            'flex items-center gap-2 px-4 py-2 rounded-t-lg text-xs font-mono transition-all cursor-pointer border-t border-x border-[#1E293B]',
+            tab.active 
+              ? 'bg-[#090D16] text-[#06B6D4] border-t-2 border-t-[#06B6D4] font-bold' 
+              : 'bg-[#1E293B]/40 text-[#94A3B8] hover:bg-[#1E293B]'
           ]"
         >
-          <div :class="['w-1.5 h-1.5 rounded-full', tab.status === 'online' ? 'bg-[#10B981]' : 'bg-[#F59E0B]']"></div>
-          <span class="text-[13px]">{{ tab.name }}</span>
-          <button class="text-[#64748B] hover:text-[#EF4444] transition-colors ml-1">
-            <span class="material-symbols-outlined text-[14px]">close</span>
+          <span class="w-2 h-2 rounded-full bg-[#10B981]"></span>
+          <span>{{ tab.name }}</span>
+          <button @click.stop="closeTab(tab)" class="text-[#64748B] hover:text-[#EF4444] ml-1">
+            <span class="material-symbols-outlined text-xs">close</span>
           </button>
         </div>
-        <button class="text-[12px] text-[#06B6D4] hover:text-[#0891B2] transition-colors px-2">
-          + New Connection
-        </button>
       </div>
 
-      <!-- Terminal Display -->
-      <div class="flex-1 bg-black p-3 font-mono text-[14px] text-[#E2E8F0] overflow-y-auto">
-        <div class="flex items-center gap-2">
-          <span class="text-[#10B981]">moisse@gcp-us-west</span>
-          <span class="text-[#64748B]">:</span>
-          <span class="text-[#3B82F6]">~</span>
-          <span class="text-[#64748B]">$</span>
-          <span class="animate-pulse">_</span>
+      <!-- ANSI CLI Output Screen -->
+      <div class="flex-1 p-4 font-mono text-xs overflow-y-auto flex flex-col gap-1.5 leading-relaxed selection:bg-[#06B6D4]/30">
+        <div 
+          v-for="(log, idx) in terminalLogs" 
+          :key="idx"
+          :class="log.color"
+        >
+          {{ log.text }}
         </div>
       </div>
 
-      <!-- Bottom Toolbar -->
-      <div class="h-9 bg-[#111827] border-t border-[#1E293B] flex items-center px-3 gap-4">
-        <button class="text-[12px] text-[#94A3B8] hover:text-[#06B6D4] transition-colors flex items-center gap-1">
-          <span class="material-symbols-outlined text-[14px]">upload</span>
-          Upload
-        </button>
-        <button class="text-[12px] text-[#94A3B8] hover:text-[#06B6D4] transition-colors flex items-center gap-1">
-          <span class="material-symbols-outlined text-[14px]">download</span>
-          Download
-        </button>
-        <button class="text-[12px] text-[#94A3B8] hover:text-[#06B6D4] transition-colors flex items-center gap-1 ml-auto">
-          <span class="material-symbols-outlined text-[14px]">fullscreen</span>
-          Fullscreen
-        </button>
-        <button class="text-[12px] text-[#94A3B8] hover:text-[#06B6D4] transition-colors flex items-center gap-1">
-          <span class="material-symbols-outlined text-[14px]">settings</span>
-          Settings
+      <!-- Command Line Input -->
+      <div class="bg-[#0F172A] border-t border-[#1E293B] p-3 flex items-center gap-2">
+        <span class="font-mono text-xs font-bold text-[#06B6D4]">$</span>
+        <input
+          v-model="commandInput"
+          @keyup.enter="handleCommand"
+          type="text"
+          placeholder="Type SSH command (top, status, ping, uname, clear)..."
+          class="flex-1 bg-transparent border-none outline-none font-mono text-xs text-[#F1F5F9] placeholder-[#64748B]"
+        />
+        <button @click="handleCommand" class="px-3 py-1 bg-[#06B6D4] text-[#0B1120] rounded text-xs font-mono font-bold hover:opacity-90">
+          EXEC
         </button>
       </div>
     </div>
   </div>
 </template>
-
-<style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
-</style>
