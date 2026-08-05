@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Dependencies
 node_modules/
 .pnpm-store/
@@ -55,3 +56,41 @@ docs/internal/
 # Build artifacts
 *.tar.gz
 *.zip
+=======
+# MacOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Environments & Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.cert
+*.pfx
+*.p12
+
+# Archives & Temporary files
+*.zip
+*.tar.gz
+*.rar
+*.7z
+*.log
+tmp/
+temp/
+
+# Node / Build artifacts
+node_modules/
+dist/
+build/
+.cache/
+
+# IDE & Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+>>>>>>> 8bae3ef (fix: add deployment index.html and resolve tailwind cdn fallback styles)

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # ⚡ AI Ops Hub
 
 **AI-Native Server Management Platform** — Manage your entire infrastructure through natural language.
@@ -202,11 +203,55 @@ ai-ops-hub/
 ── CHANGELOG.md
 ├── CONTRIBUTING.md
 ├── LICENSE
+=======
+# AI Ops Hub Design System
+
+A modern, high-performance, dark-themed cyberpunk UI design system built for AI Operations, Infrastructure Management, and Mission-Critical Control Centers.
+
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![HTML5](https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=white)
+
+---
+
+## ✨ Features
+
+- 🌌 **Deep Space Dark Theme**: Tailored for high-density monitoring and operations centers.
+- ⚡ **Tailwind CSS Powered**: Clean utility-first structure for modern web applications.
+- 🌐 **Multi-Language Support**: Includes English, Bilingual (English/Chinese), and Chinese dashboard variants.
+- 📱 **Responsive & Mobile Ready**: Pre-built layouts optimized for mobile devices and wide command center displays.
+- 🛡️ **Zero Privacy Leaks**: Cleaned mock dataset with standard environment placeholders.
+
+---
+
+## 📂 Project Architecture
+
+```
+ai-dashboard/
+├── stitch_ai_ops_hub_design_system/
+│   ├── ai_chat_ai_ops_hub/             # AI Assistant & Chat Interface
+│   ├── ai_chat_bilingual_ai_ops_hub/   # Bilingual AI Chat
+│   ├── certificates_ai_ops_hub/        # Keys & SSL/TLS Certificates Admin
+│   ├── certificates_bilingual_ai_ops_hub/
+│   ├── dashboard_ai_ops_hub/           # Primary Operations Dashboard
+│   ├── dashboard_bilingual_ai_ops_hub/ # Bilingual Main Dashboard
+│   ├── dashboard_chinese_ai_ops_hub/   # Chinese Main Dashboard
+│   ├── dashboard_mobile_ai_ops_hub/    # Mobile Dashboard Layout
+│   ├── dashboard_mobile_bilingual_ai_ops_hub/
+│   ├── login_ai_ops_hub/               # Secure Login Portal
+│   ├── settings_ai_ops_hub/            # System Settings & Key Management
+│   ├── settings_bilingual_ai_ops_hub/
+│   ├── terminal_ai_ops_hub/            # Live Web SSH/Terminal Monitor
+│   ├── terminal_bilingual_ai_ops_hub/
+│   └── user_profile_ai_ops_hub/        # User Profile & Security Center
+├── .gitignore
+>>>>>>> 8bae3ef (fix: add deployment index.html and resolve tailwind cdn fallback styles)
 └── README.md
 ```
 
 ---
 
+<<<<<<< HEAD
 ## 🔌 API Documentation
 
 ### Servers
@@ -325,10 +370,24 @@ npm test
 
 # Build for production
 npm run build
+=======
+## 🚀 Getting Started
+
+Simply clone the repository and open any `code.html` in your web browser:
+
+```bash
+# Clone the repository
+git clone https://github.com/your-username/your-repo-name.git
+
+# Open the main dashboard in browser
+cd your-repo-name/stitch_ai_ops_hub_design_system/dashboard_ai_ops_hub
+open code.html
+>>>>>>> 8bae3ef (fix: add deployment index.html and resolve tailwind cdn fallback styles)
 ```
 
 ---
 
+<<<<<<< HEAD
 ## 🔒 Security
 
 - **SSH keys** are never stored in the database — only file paths
@@ -391,3 +450,8 @@ This project is licensed under the MIT License — see the [LICENSE](LICENSE) fi
 ---
 
 **Made with ❤️ by Moisse Li**
+=======
+## 📄 License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+>>>>>>> 8bae3ef (fix: add deployment index.html and resolve tailwind cdn fallback styles)

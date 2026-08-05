@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>AI Ops Hub Design System - Overview</title>
+    <!-- Modern Typography & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    
+    <!-- Fallback Core Design System Styles (Zero-Dependency & Self-Contained) -->
+    <style>
+        :root {
+            --bg-color: #0d1322;
+            --surface-color: #191f2f;
+            --surface-high: #242a3a;
+            --border-color: #3d494c;
+            --primary-color: #4cd7f6;
+            --secondary-color: #b4c5ff;
+            --tertiary-color: #4edea3;
+            --text-main: #dde2f8;
+            --text-muted: #bcc9cd;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Inter', system-ui, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        a { color: inherit; text-decoration: none; }
+    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "background": "#0d1322",
+                        "surface": "#191f2f",
+                        "surface-high": "#242a3a",
+                        "border-slate": "#3d494c",
+                        "primary": "#4cd7f6",
+                        "tertiary": "#4edea3",
+                        "on-surface": "#dde2f8",
+                        "on-surface-variant": "#bcc9cd"
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-[#0d1322] text-[#dde2f8] antialiased">
+
+    <!-- Top Navigation Header -->
+    <header class="border-b border-[#3d494c] bg-[#191f2f]/80 backdrop-blur sticky top-0 z-50 px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-[#4cd7f6] text-3xl">smart_toy</span>
+            <div>
+                <h1 class="font-bold text-xl text-[#dde2f8] tracking-tight">AI Ops Hub <span class="text-xs px-2 py-0.5 rounded bg-[#4cd7f6]/10 text-[#4cd7f6] border border-[#4cd7f6]/30 mono">v1.0.0</span></h1>
+                <p class="text-xs text-[#bcc9cd]">Next-Gen Dark Cyberpunk Control Center Design System</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <a href="https://github.com" target="_blank" class="flex items-center gap-2 text-xs px-3 py-1.5 rounded-lg border border-[#3d494c] bg-[#242a3a] hover:border-[#4cd7f6] transition-colors">
+                <span class="material-symbols-outlined text-sm">code</span> GitHub Repository
+            </a>
+        </div>
+    </header>
+
+    <!-- Hero Showcase Section -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-6 md:p-10 space-y-8">
+        <div class="p-8 rounded-2xl bg-gradient-to-r from-[#191f2f] to-[#151b2b] border border-[#3d494c] relative overflow-hidden shadow-2xl">
+            <div class="absolute -right-10 -bottom-10 w-96 h-96 bg-[#4cd7f6]/5 rounded-full blur-3xl"></div>
+            <h2 class="text-3xl font-extrabold text-white mb-3">AI Ops Hub 界面模块与设计系统指南</h2>
+            <p class="text-[#bcc9cd] max-w-2xl text-sm leading-relaxed mb-6">
+                基于 Tailwind CSS 打造的高性能、现代暗黑赛博朋克风格 UI 界面套件，专为 AI 运维、云原生基础设施监控及实时数据指挥中心设计。
+            </p>
+            <div class="flex flex-wrap gap-4">
+                <a href="./stitch_ai_ops_hub_design_system/dashboard_ai_ops_hub/code.html" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#4cd7f6] text-[#003640] font-semibold text-sm hover:bg-[#acedff] transition-all shadow-lg shadow-[#4cd7f6]/20">
+                    <span class="material-symbols-outlined text-lg">dashboard</span> 打开主控台 Dashboard
+                </a>
+                <a href="./stitch_ai_ops_hub_design_system/ai_chat_ai_ops_hub/code.html" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#242a3a] border border-[#3d494c] text-[#dde2f8] font-semibold text-sm hover:border-[#4cd7f6] hover:text-[#4cd7f6] transition-all">
+                    <span class="material-symbols-outlined text-lg">chat</span> AI 运维助手 Chat
+                </a>
+            </div>
+        </div>
+
+        <!-- Modules Grid -->
+        <div>
+            <h3 class="text-xl font-bold text-[#dde2f8] mb-6 flex items-center gap-2">
+                <span class="material-symbols-outlined text-[#4edea3]">grid_view</span> 核心页面模块预览
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                <!-- Module 1: Dashboard -->
+                <div class="group bg-[#191f2f] border border-[#3d494c] rounded-xl overflow-hidden hover:border-[#4cd7f6] transition-all duration-300 flex flex-col">
+                    <div class="h-44 bg-[#0d1322] relative overflow-hidden flex items-center justify-center p-4 border-b border-[#3d494c]">
+                        <img src="./stitch_ai_ops_hub_design_system/dashboard_ai_ops_hub/screen.png" alt="Dashboard Preview" class="w-full h-full object-cover rounded border border-[#3d494c] group-hover:scale-105 transition-transform duration-500" onerror="this.style.display='none'"/>
+                        <span class="material-symbols-outlined text-5xl text-[#4cd7f6]/40 absolute">dashboard</span>
+                    </div>
+                    <div class="p-5 flex-1 flex flex-col justify-between">
+                        <div>
+                            <h4 class="font-bold text-lg text-white mb-1 group-hover:text-[#4cd7f6] transition-colors">Operations Dashboard</h4>
+                            <p class="text-xs text-[#bcc9cd] mb-4">实时集群节点监控、GPU 算力利用率与全盘健康状态卡片。</p>
+                        </div>
+                        <div class="flex items-center justify-between border-t border-[#3d494c]/60 pt-3">
+                            <span class="text-[11px] mono text-[#4edea3]">英文 / 中文 / 双语</span>
+                            <a href="./stitch_ai_ops_hub_design_system/dashboard_ai_ops_hub/code.html" class="text-xs text-[#4cd7f6] font-semibold hover:underline flex items-center gap-1">访问 <span class="material-symbols-outlined text-sm">arrow_forward</span></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Module 2: AI Chat -->
+                <div class="group bg-[#191f2f] border border-[#3d494c] rounded-xl overflow-hidden hover:border-[#4cd7f6] transition-all duration-300 flex flex-col">
+                    <div class="h-44 bg-[#0d1322] relative overflow-hidden flex items-center justify-center p-4 border-b border-[#3d494c]">
+                        <img src="./stitch_ai_ops_hub_design_system/ai_chat_ai_ops_hub/screen.png" alt="AI Chat Preview" class="w-full h-full object-cover rounded border border-[#3d494c] group-hover:scale-105 transition-transform duration-500" onerror="this.style.display='none'"/>
+                        <span class="material-symbols-outlined text-5xl text-[#4cd7f6]/40 absolute">chat</span>
+                    </div>
+                    <div class="p-5 flex-1 flex flex-col justify-between">
+                        <div>
+                            <h4 class="font-bold text-lg text-white mb-1 group-hover:text-[#4cd7f6] transition-colors">AI Assistant & Chat</h4>
+                            <p class="text-xs text-[#bcc9cd] mb-4">智能运维大模型对话、日志分析与指令自动执行界面。</p>
+                        </div>
+                        <div class="flex items-center justify-between border-t border-[#3d494c]/60 pt-3">
+                            <span class="text-[11px] mono text-[#4edea3]">单页 / 双语支持</span>
+                            <a href="./stitch_ai_ops_hub_design_system/ai_chat_ai_ops_hub/code.html" class="text-xs text-[#4cd7f6] font-semibold hover:underline flex items-center gap-1">访问 <span class="material-symbols-outlined text-sm">arrow_forward</span></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Module 3: Terminal -->
+                <div class="group bg-[#191f2f] border border-[#3d494c] rounded-xl overflow-hidden hover:border-[#4cd7f6] transition-all duration-300 flex flex-col">
+                    <div class="h-44 bg-[#0d1322] relative overflow-hidden flex items-center justify-center p-4 border-b border-[#3d494c]">
+                        <img src="./stitch_ai_ops_hub_design_system/terminal_ai_ops_hub/screen.png" alt="Terminal Preview" class="w-full h-full object-cover rounded border border-[#3d494c] group-hover:scale-105 transition-transform duration-500" onerror="this.style.display='none'"/>
+                        <span class="material-symbols-outlined text-5xl text-[#4cd7f6]/40 absolute">terminal</span>
+                    </div>
+                    <div class="p-5 flex-1 flex flex-col justify-between">
+                        <div>
+                            <h4 class="font-bold text-lg text-white mb-1 group-hover:text-[#4cd7f6] transition-colors">Web SSH Terminal</h4>
+                            <p class="text-xs text-[#bcc9cd] mb-4">在线终端模拟器，支持多节点 SSH 监控与指令下发。</p>
+                        </div>
+                        <div class="flex items-center justify-between border-t border-[#3d494c]/60 pt-3">
+                            <span class="text-[11px] mono text-[#4edea3]">全功能 Terminal</span>
+                            <a href="./stitch_ai_ops_hub_design_system/terminal_ai_ops_hub/code.html" class="text-xs text-[#4cd7f6] font-semibold hover:underline flex items-center gap-1">访问 <span class="material-symbols-outlined text-sm">arrow_forward</span></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Module 4: Keys & Certificates -->
+                <div class="group bg-[#191f2f] border border-[#3d494c] rounded-xl overflow-hidden hover:border-[#4cd7f6] transition-all duration-300 flex flex-col">
+                    <div class="h-44 bg-[#0d1322] relative overflow-hidden flex items-center justify-center p-4 border-b border-[#3d494c]">
+                        <img src="./stitch_ai_ops_hub_design_system/certificates_ai_ops_hub/screen.png" alt="Certificates Preview" class="w-full h-full object-cover rounded border border-[#3d494c] group-hover:scale-105 transition-transform duration-500" onerror="this.style.display='none'"/>
+                        <span class="material-symbols-outlined text-5xl text-[#4cd7f6]/40 absolute">key</span>
+                    </div>
+                    <div class="p-5 flex-1 flex flex-col justify-between">
+                        <div>
+                            <h4 class="font-bold text-lg text-white mb-1 group-hover:text-[#4cd7f6] transition-colors">Keys & Certificates</h4>
+                            <p class="text-xs text-[#bcc9cd] mb-4">SSL/TLS 证书生命周期管理、IAM 密钥分发与安全审计。</p>
+                        </div>
+                        <div class="flex items-center justify-between border-t border-[#3d494c]/60 pt-3">
+                            <span class="text-[11px] mono text-[#4edea3]">安全证书看板</span>
+                            <a href="./stitch_ai_ops_hub_design_system/certificates_ai_ops_hub/code.html" class="text-xs text-[#4cd7f6] font-semibold hover:underline flex items-center gap-1">访问 <span class="material-symbols-outlined text-sm">arrow_forward</span></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Module 5: Settings -->
+                <div class="group bg-[#191f2f] border border-[#3d494c] rounded-xl overflow-hidden hover:border-[#4cd7f6] transition-all duration-300 flex flex-col">
+                    <div class="h-44 bg-[#0d1322] relative overflow-hidden flex items-center justify-center p-4 border-b border-[#3d494c]">
+                        <img src="./stitch_ai_ops_hub_design_system/settings_ai_ops_hub/screen.png" alt="Settings Preview" class="w-full h-full object-cover rounded border border-[#3d494c] group-hover:scale-105 transition-transform duration-500" onerror="this.style.display='none'"/>
+                        <span class="material-symbols-outlined text-5xl text-[#4cd7f6]/40 absolute">settings</span>
+                    </div>
+                    <div class="p-5 flex-1 flex flex-col justify-between">
+                        <div>
+                            <h4 class="font-bold text-lg text-white mb-1 group-hover:text-[#4cd7f6] transition-colors">System Settings</h4>
+                            <p class="text-xs text-[#bcc9cd] mb-4">系统参数配置、API 端点映射与告警阈值调节。</p>
+                        </div>
+                        <div class="flex items-center justify-between border-t border-[#3d494c]/60 pt-3">
+                            <span class="text-[11px] mono text-[#4edea3]">系统设置面板</span>
+                            <a href="./stitch_ai_ops_hub_design_system/settings_ai_ops_hub/code.html" class="text-xs text-[#4cd7f6] font-semibold hover:underline flex items-center gap-1">访问 <span class="material-symbols-outlined text-sm">arrow_forward</span></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Module 6: User Profile -->
+                <div class="group bg-[#191f2f] border border-[#3d494c] rounded-xl overflow-hidden hover:border-[#4cd7f6] transition-all duration-300 flex flex-col">
+                    <div class="h-44 bg-[#0d1322] relative overflow-hidden flex items-center justify-center p-4 border-b border-[#3d494c]">
+                        <img src="./stitch_ai_ops_hub_design_system/user_profile_ai_ops_hub/screen.png" alt="Profile Preview" class="w-full h-full object-cover rounded border border-[#3d494c] group-hover:scale-105 transition-transform duration-500" onerror="this.style.display='none'"/>
+                        <span class="material-symbols-outlined text-5xl text-[#4cd7f6]/40 absolute">person</span>
+                    </div>
+                    <div class="p-5 flex-1 flex flex-col justify-between">
+                        <div>
+                            <h4 class="font-bold text-lg text-white mb-1 group-hover:text-[#4cd7f6] transition-colors">User Profile Center</h4>
+                            <p class="text-xs text-[#bcc9cd] mb-4">个人账号管理、双因素认证 (2FA) 与安全日志。</p>
+                        </div>
+                        <div class="flex items-center justify-between border-t border-[#3d494c]/60 pt-3">
+                            <span class="text-[11px] mono text-[#4edea3]">个人中心</span>
+                            <a href="./stitch_ai_ops_hub_design_system/user_profile_ai_ops_hub/code.html" class="text-xs text-[#4cd7f6] font-semibold hover:underline flex items-center gap-1">访问 <span class="material-symbols-outlined text-sm">arrow_forward</span></a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-[#3d494c] bg-[#191f2f] py-6 text-center text-xs text-[#bcc9cd] mt-auto">
+        <p>AI Ops Hub Design System &copy; 2026. Released under the MIT License.</p>
+    </footer>
+
+</body>
+</html>
