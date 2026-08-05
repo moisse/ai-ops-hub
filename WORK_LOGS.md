@@ -36,12 +36,13 @@
 - [x] **Web SSH Terminal 命令行**: 实现打字输入 `top`, `status`, `ping`, `uname`, `help`, `clear` 并在屏幕追加彩色命令日志。
 - [x] **Dashboard 动态 Modal**: 实现 `Add Server` 模态弹窗与 `AIOpsDB` 数据库动态增删查改。
 
-### 19. 端到端 E2E 自动化闭环自测 100% 完美通过 (2026-08-06 01:09)
-- [x] **自动化测试脚本撰写 (`test_e2e_flow.py`)**: 编写 Python 端到端连通性测试脚本，对 GCP 云服务器 (`34.136.76.211:3000`) 的真实后端发包自测。
-- [x] **测试 Step 1 (添加服务器节点)**: 成功发包 `POST /api/servers` 创建服务器 `ubuntu@node-prod-aws-01.aiops.net (54.210.12.88:22)`，SQLite 实时落库分配 `ID: 1`。
-- [x] **测试 Step 2 (读取系统节点)**: 发起 `GET /api/servers`，正确检索出新落库的 1 台真实 AWS 节点，状态 `online`。
-- [x] **测试 Step 3 (AI Agent 诊断)**: 携带该新节点上下文发起 `POST /api/chat`，Agent 基于选定的活动模型 (`deepseek-reasoner`) 返回了专业 SysAdmin 故障排查回包。
-- [x] **测试 Step 4 (物理日志追加存盘)**: 查看 GCP 云服务器 `/home/moisse/ai-ops-hub/backend/data/app.log`，所有 3 步操作的探针与事件日志全部 100% 物理追加存盘，无任何日志丢失。
+### 20. AI Agent 敏感操作授权门禁 & 全站专业去个人化文案上线 (2026-08-06 01:11)
+- [x] **AI Agent 敏感操作授权确认门禁 (`AIChat.vue`)**:
+  - 当下发包含重启服务器、删除节点、自动续期/修改证书、重置 LLM 密钥等高风险指令时，Agent 自动在对话流中输出 **“🛡️ 敏感操作授权确认”** 卡片。
+  - 明确标注受影响资源范围（如 `单台服务器: ubuntu@node-aws-01` vs `全量服务器集群` vs `特定域名 SSL 证书`）。
+  - 提供 **`[✅ 同意并授权 Agent 执行]`** 与 **`[❌ 拒绝授权]`** 按钮，只有用户手动确认后，指令才真正下发。
+- [x] **全站纯化去个人化文案 (`Settings.vue` & `locales.ts`)**: 彻底清理了代码库与界面中的个人介绍话术，全站更名为统一专业的工业级产品文案：“AI Ops Hub 是一套开源多云智能运维控制中枢...”。
+- [x] **彻底纠正与统一 SSH 终端命名 (`Sidebar.vue` & `locales.ts`)**: 彻底删除了侧边栏及所有组件中残存的 `Web SSH 终端 Monitor` 冗长字符，统一为 `SSH 终端` (SSH Terminal)。
 
 ---
 
