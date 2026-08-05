@@ -29,15 +29,6 @@ async function loadCerts() {
   } catch (e) {
     console.warn('API certs fallback')
   }
-
-  if (certs.value.length === 0) {
-    certs.value = [
-      { id: 'c1', name: 'SSH Key (GCP-US-West)', type: 'SSH Key', server: 'Server 01', expiryDate: '-', daysLeft: null, status: 'Normal' },
-      { id: 'c2', name: 'SSL (*.example.com)', type: 'SSL Certificate', server: 'Prod-01', expiryDate: '2026-06-30', daysLeft: -36, status: 'Expired' },
-      { id: 'c3', name: 'Domain (example.com)', type: 'Domain', server: 'Prod-01', expiryDate: '2027-03-15', daysLeft: 222, status: 'Normal' },
-      { id: 'c4', name: 'SSL (api.example.com)', type: 'SSL Certificate', server: 'Prod-02', expiryDate: '2026-09-15', daysLeft: 41, status: 'Expiring' }
-    ]
-  }
 }
 
 const filteredCerts = computed(() => {
@@ -103,8 +94,19 @@ onMounted(() => {
       </select>
     </div>
 
+    <!-- Pure Empty State -->
+    <div v-if="filteredCerts.length === 0" class="bg-[#0F172A] border border-dashed border-[#1E293B] rounded-2xl p-12 flex flex-col items-center justify-center text-center gap-3">
+      <span class="material-symbols-outlined text-3xl text-[#06B6D4]">verified_user</span>
+      <h3 class="text-sm font-bold text-[#F1F5F9]">
+        {{ i18n.currentLang === 'zh-CN' ? '系统暂无关联防护证书/密钥' : 'No Certificates Managed' }}
+      </h3>
+      <p class="text-xs text-[#94A3B8]">
+        {{ i18n.currentLang === 'zh-CN' ? '系统已准备就绪，添加服务器后将自动扫描该节点的 SSL 与 SSH Key。' : 'System ready. Certificates will be scanned automatically when server nodes are registered.' }}
+      </p>
+    </div>
+
     <!-- Table -->
-    <div class="bg-[#0F172A] border border-[#1E293B] rounded-xl overflow-hidden shadow-lg">
+    <div v-else class="bg-[#0F172A] border border-[#1E293B] rounded-xl overflow-hidden shadow-lg">
       <table class="w-full text-left text-xs border-collapse">
         <thead class="bg-[#1E293B]/60 text-[#94A3B8] font-bold border-b border-[#1E293B]">
           <tr>
@@ -123,10 +125,10 @@ onMounted(() => {
             <td class="p-4 font-mono text-[#06B6D4]">{{ c.server }}</td>
             <td class="p-4 font-mono text-[#94A3B8]">{{ c.expiryDate }}</td>
             <td class="p-4 font-mono font-bold">
-              <span v-if="c.daysLeft === null" class="text-[#64748B]">-</span>
-              <span v-else-if="c.daysLeft < 0" class="text-[#EF4444]">{{ c.daysLeft }}d</span>
-              <span v-else-if="c.daysLeft < 60" class="text-[#F59E0B]">{{ c.daysLeft }}d</span>
-              <span v-else class="text-[#10B981]">{{ c.daysLeft }}d</span>
+              <span v-if="c.daysLeft === null || c.daysLeft === undefined" class="text-[#64748B]">-</span>
+              <span v-else-if="c.daysLeft < 0" class="text-[#EF4444]">{{ c.daysLeft }} {{ i18n.currentLang === 'zh-CN' ? '天' : 'days' }}</span>
+              <span v-else-if="c.daysLeft < 60" class="text-[#F59E0B]">{{ c.daysLeft }} {{ i18n.currentLang === 'zh-CN' ? '天' : 'days' }}</span>
+              <span v-else class="text-[#10B981]">{{ c.daysLeft }} {{ i18n.currentLang === 'zh-CN' ? '天' : 'days' }}</span>
             </td>
             <td class="p-4">
               <span 

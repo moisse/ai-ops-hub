@@ -55,27 +55,6 @@ db.exec(`
   );
 `);
 
-// Check and Seed Initial Data
-try {
-  const serverCount = db.prepare('SELECT count(*) as count FROM servers').get().count;
-  if (serverCount === 0) {
-    const insertServer = db.prepare('INSERT INTO servers (name, ip, cloud_provider, region, status, cpu, memory) VALUES (?, ?, ?, ?, ?, ?, ?)');
-    insertServer.run('node-us-east-01.aiops.net', '192.168.1.101', 'AWS', 'US-East', 'online', 12, 45);
-    insertServer.run('node-us-west-02.aiops.net', '192.168.1.102', 'GCP', 'US-West', 'online', 28, 62);
-    insertServer.run('node-eu-west-01.aiops.net', '192.168.1.103', 'Tencent', 'EU-West', 'warning', 89, 92);
-    insertServer.run('node-ap-east-01.aiops.net', '192.168.1.104', 'Aliyun', 'AP-East', 'online', 35, 54);
-    insertServer.run('node-eu-central-03.aiops.net', '192.168.1.105', 'Azure', 'EU-Central', 'offline', 0, 0);
-
-    const insertCert = db.prepare('INSERT INTO certificates (id, name, type, server, expiry_date, days_left, status) VALUES (?, ?, ?, ?, ?, ?, ?)');
-    insertCert.run('c1', 'SSH Key (GCP-US-West)', 'SSH Key', 'Server 01', '-', null, 'Normal');
-    insertCert.run('c2', 'SSL (*.example.com)', 'SSL Certificate', 'Prod-01', '2026-06-30', -36, 'Expired');
-    insertCert.run('c3', 'Domain (example.com)', 'Domain', 'Prod-01', '2027-03-15', 222, 'Normal');
-    insertCert.run('c4', 'SSL (api.example.com)', 'SSL Certificate', 'Prod-02', '2026-09-15', 41, 'Expiring');
-  }
-} catch (e) {
-  console.warn('SQLite seed error:', e.message);
-}
-
 // Auth API Routes
 app.get('/api/auth/status', (req, res) => {
   const userCount = db.prepare('SELECT count(*) as count FROM users').get().count;
@@ -109,9 +88,9 @@ app.post('/api/auth/login', (req, res) => {
   res.json({ token, user: { username: user.username, role: user.role } });
 });
 
-// Server API Routes
+// Server API Routes (Clean Pure System CRUD)
 app.get('/api/servers', (req, res) => {
-  const servers = db.prepare('SELECT * FROM servers ORDER BY id').all();
+  const servers = db.prepare('SELECT * FROM servers ORDER BY id DESC').all();
   res.json(servers.map(s => ({
     id: String(s.id),
     hostname: s.name,
@@ -120,18 +99,24 @@ app.get('/api/servers', (req, res) => {
     status: s.status,
     cpu: s.cpu,
     memory: s.memory,
-    uptime: '45d 2h',
+    uptime: '1d 0h',
     latency: Math.floor(Math.random() * 20 + 1)
   })));
 });
 
 app.post('/api/servers', (req, res) => {
-  const { hostname, region } = req.body;
-  const ip = '192.168.1.' + Math.floor(Math.random() * 100 + 100);
-  const result = db.prepare('INSERT INTO servers (name, ip, cloud_provider, region, status) VALUES (?, ?, ?, ?, ?)').run(
-    hostname || 'node-new.aiops.net', ip, 'Cloud', region || 'US-East', 'online'
+  const { hostname, region, ip } = req.body;
+  const nodeIp = ip || ('192.168.1.' + Math.floor(Math.random() * 100 + 100));
+  const result = db.prepare('INSERT INTO servers (name, ip, cloud_provider, region, status, cpu, memory) VALUES (?, ?, ?, ?, ?, ?, ?)').run(
+    hostname || 'node-server.aiops.net', nodeIp, 'Cloud', region || 'US-East', 'online', Math.floor(Math.random() * 30 + 10), Math.floor(Math.random() * 40 + 20)
   );
-  res.status(201).json({ id: String(result.lastInsertRowid), hostname, ip, status: 'online' });
+  res.status(201).json({ id: String(result.lastInsertRowid), hostname, ip: nodeIp, status: 'online' });
+});
+
+app.delete('/api/servers/:id', (req, res) => {
+  const { id } = req.params;
+  db.prepare('DELETE FROM servers WHERE id = ?').run(id);
+  res.json({ success: true, message: 'Server deleted successfully' });
 });
 
 // Certificates API
@@ -143,7 +128,7 @@ app.get('/api/certificates', (req, res) => {
 // AI Chat Mock API
 app.post('/api/chat', (req, res) => {
   const { message } = req.body;
-  const reply = `AI Ops System Diagnosis: Command "${message}" executed successfully. Node health is normal.`;
+  const reply = `AI Ops System Diagnosis: Command "${message}" executed. Cluster health normal.`;
   res.json({ reply, timestamp: new Date().toISOString() });
 });
 

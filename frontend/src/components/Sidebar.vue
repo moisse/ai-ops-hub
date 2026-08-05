@@ -52,16 +52,17 @@ function isActive(path: string) {
       </button>
     </nav>
 
-    <!-- Bottom Status -->
-    <div class="px-4 py-4 border-t border-[#1E293B] mt-auto">
-      <div class="bg-[#1E293B] rounded-lg p-3 flex items-center justify-between mb-3 border border-[#334155]">
+    <!-- Bottom Status & Copyright Attribution -->
+    <div class="px-4 py-4 border-t border-[#1E293B] mt-auto flex flex-col gap-3">
+      <div class="bg-[#1E293B] rounded-lg p-3 flex items-center justify-between border border-[#334155]">
         <span class="text-[11px] font-bold text-[#10B981] uppercase tracking-wide">{{ i18n.t.serverHealthOptimal }}</span>
         <div class="w-2 h-2 rounded-full bg-[#10B981]"></div>
       </div>
-      <button @click="navigateTo('/dashboard')" class="flex items-center gap-3 px-4 py-2.5 text-[#94A3B8] hover:bg-[rgba(255,255,255,0.03)] hover:text-[#F1F5F9] transition-all cursor-pointer rounded-lg w-full text-left">
-        <span class="material-symbols-outlined text-[20px]">analytics</span>
-        <span class="text-[13px]">{{ i18n.t.systemOverview }}</span>
-      </button>
+      
+      <!-- Official Creator Copyright Line -->
+      <div class="text-[11px] text-[#64748B] font-mono text-center pt-1 border-t border-[#1E293B]/60">
+        Design by <span class="text-[#06B6D4] font-bold">Moisse</span> 2026
+      </div>
     </div>
   </aside>
 </template>

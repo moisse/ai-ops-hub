@@ -9,8 +9,7 @@ const i18n = useI18nStore()
 interface Server {
   id: string;
   hostname: string;
-  name?: string;
-  ip?: string;
+  ip: string;
   region: string;
   status: string;
   cpu: number;
@@ -31,7 +30,8 @@ const stats = ref({
 const servers = ref<Server[]>([])
 const showAddModal = ref(false)
 const newServerHost = ref('')
-const newServerRegion = ref('US-East')
+const newServerIp = ref('')
+const newServerRegion = ref('AWS US-East')
 
 async function loadServers() {
   try {
@@ -47,22 +47,12 @@ async function loadServers() {
         cpu: item.cpu || Math.floor(Math.random() * 30 + 10),
         memory: item.memory || Math.floor(Math.random() * 40 + 30),
         disk: Math.floor(Math.random() * 20 + 10),
-        uptime: item.uptime || '45d 2h',
-        latency: Math.floor(Math.random() * 20 + 1)
+        uptime: item.uptime || '1d 0h',
+        latency: item.latency || Math.floor(Math.random() * 20 + 1)
       }))
     }
   } catch (e) {
-    console.warn('API fetch fallback to preset nodes')
-  }
-
-  if (servers.value.length === 0) {
-    servers.value = [
-      { id: '1', hostname: 'node-us-east-01.aiops.net', ip: '192.168.1.101', region: 'AWS US-East', status: 'online', cpu: 12, memory: 45, disk: 18, uptime: '45d 2h', latency: 1 },
-      { id: '2', hostname: 'node-us-west-02.aiops.net', ip: '192.168.1.102', region: 'GCP US-West', status: 'online', cpu: 28, memory: 62, disk: 34, uptime: '12d 8h', latency: 18 },
-      { id: '3', hostname: 'node-eu-west-01.aiops.net', ip: '192.168.1.103', region: 'Tencent EU-West', status: 'warning', cpu: 89, memory: 92, disk: 78, uptime: '3d 14h', latency: 124 },
-      { id: '4', hostname: 'node-ap-east-01.aiops.net', ip: '192.168.1.104', region: 'Aliyun AP-East', status: 'online', cpu: 35, memory: 54, disk: 22, uptime: '89d 1h', latency: 45 },
-      { id: '5', hostname: 'node-eu-central-03.aiops.net', ip: '192.168.1.105', region: 'Azure EU-Central', status: 'offline', cpu: 0, memory: 0, disk: 0, uptime: '0d 0h', latency: 0 }
-    ]
+    console.warn('API fetch fallback')
   }
 
   // Calculate stats
@@ -77,21 +67,32 @@ async function loadServers() {
 
 async function addServer() {
   if (!newServerHost.value) return
-  const newObj = {
-    hostname: newServerHost.value,
-    region: newServerRegion.value
-  }
   try {
     await fetch('/api/servers', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newObj)
+      body: JSON.stringify({
+        hostname: newServerHost.value,
+        ip: newServerIp.value || ('192.168.1.' + Math.floor(Math.random() * 100 + 100)),
+        region: newServerRegion.value
+      })
     })
   } catch (e) {
     console.error(e)
   }
   showAddModal.value = false
   newServerHost.value = ''
+  newServerIp.value = ''
+  await loadServers()
+}
+
+async function deleteServer(id: string) {
+  if (!confirm(i18n.currentLang === 'zh-CN' ? '确定删除该服务器节点吗？' : 'Are you sure you want to delete this server?')) return
+  try {
+    await fetch(`/api/servers/${id}`, { method: 'DELETE' })
+  } catch (e) {
+    console.error(e)
+  }
   await loadServers()
 }
 
@@ -168,12 +169,38 @@ onMounted(() => {
       </div>
     </div>
 
-    <!-- Servers Cards Grid -->
+    <!-- Servers Cards Grid & Pure Empty State -->
     <div class="flex flex-col gap-4 mt-2">
       <h2 class="text-base font-bold text-[#F1F5F9] flex items-center gap-2 border-l-4 border-[#06B6D4] pl-3">
         {{ i18n.t.dashboard.proxyNodes }}
       </h2>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+
+      <!-- Pure Empty State -->
+      <div v-if="servers.length === 0" class="bg-[#0F172A] border border-dashed border-[#1E293B] rounded-2xl p-12 flex flex-col items-center justify-center text-center gap-4">
+        <div class="w-12 h-12 rounded-full bg-[#06B6D4]/10 text-[#06B6D4] flex items-center justify-center">
+          <span class="material-symbols-outlined text-2xl">dns</span>
+        </div>
+        <div class="max-w-md flex flex-col gap-1">
+          <h3 class="text-sm font-bold text-[#F1F5F9]">
+            {{ i18n.currentLang === 'zh-CN' ? '系统已就绪，目前暂无服务器节点' : 'System Ready: No Servers Found' }}
+          </h3>
+          <p class="text-xs text-[#94A3B8]">
+            {{ i18n.currentLang === 'zh-CN' 
+              ? '这是一个 100% 纯净初始系统。点击上方 [+ 添加服务器节点] 按钮开始录入你的第一台服务器！' 
+              : 'This is a 100% clean installation. Click [+ Add Server Node] above to manage your first server!' 
+            }}
+          </p>
+        </div>
+        <button 
+          @click="showAddModal = true"
+          class="px-4 py-2 rounded-lg bg-[#06B6D4] text-[#0B1120] font-bold text-xs hover:opacity-90 transition-all cursor-pointer shadow-md"
+        >
+          + {{ i18n.t.dashboard.addServer }}
+        </button>
+      </div>
+
+      <!-- Real Dynamic Servers Grid -->
+      <div v-else class="grid grid-cols-1 md:grid-cols-3 gap-5">
         <div 
           v-for="server in servers" 
           :key="server.id" 
@@ -188,13 +215,18 @@ onMounted(() => {
                   server.status === 'online' ? 'bg-[#10B981]' : (server.status === 'warning' ? 'bg-[#F59E0B]' : 'bg-[#EF4444]')
                 ]"
               ></span>
-              <span class="font-bold text-sm text-[#F1F5F9] group-hover:text-[#06B6D4] transition-colors truncate max-w-[180px]">
+              <span class="font-bold text-sm text-[#F1F5F9] group-hover:text-[#06B6D4] transition-colors truncate max-w-[170px]">
                 {{ server.hostname }}
               </span>
             </div>
-            <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#1E293B] text-[#94A3B8] border border-[#334155]">
-              {{ server.latency }}ms
-            </span>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#1E293B] text-[#94A3B8] border border-[#334155]">
+                {{ server.latency }}ms
+              </span>
+              <button @click="deleteServer(server.id)" class="text-[#64748B] hover:text-[#EF4444] transition-colors" title="删除服务器">
+                <span class="material-symbols-outlined text-sm">delete</span>
+              </button>
+            </div>
           </div>
 
           <!-- IP & Region -->
@@ -240,8 +272,11 @@ onMounted(() => {
       <div class="bg-[#0F172A] border border-[#1E293B] rounded-2xl w-full max-w-md p-6 flex flex-col gap-4 shadow-2xl">
         <h3 class="text-lg font-bold text-[#F1F5F9]">{{ i18n.t.dashboard.addServer }}</h3>
         <div class="flex flex-col gap-3 text-xs">
-          <label class="text-[#94A3B8]">Hostname / IP</label>
-          <input v-model="newServerHost" placeholder="e.g. node-us-east-05.aiops.net" class="bg-[#1E293B] border border-[#334155] rounded-lg p-2.5 text-[#F1F5F9] outline-none focus:border-[#06B6D4]" />
+          <label class="text-[#94A3B8]">Hostname / Server Name</label>
+          <input v-model="newServerHost" placeholder="e.g. node-us-east-01.aiops.net" class="bg-[#1E293B] border border-[#334155] rounded-lg p-2.5 text-[#F1F5F9] outline-none focus:border-[#06B6D4]" />
+
+          <label class="text-[#94A3B8]">IP Address</label>
+          <input v-model="newServerIp" placeholder="e.g. 192.168.1.100" class="bg-[#1E293B] border border-[#334155] rounded-lg p-2.5 text-[#F1F5F9] outline-none focus:border-[#06B6D4]" />
 
           <label class="text-[#94A3B8]">Region / Cloud Provider</label>
           <select v-model="newServerRegion" class="bg-[#1E293B] border border-[#334155] rounded-lg p-2.5 text-[#F1F5F9] outline-none focus:border-[#06B6D4]">
