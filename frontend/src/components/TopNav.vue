@@ -41,9 +41,15 @@ onMounted(() => {
     <div class="flex items-center gap-6">
       <h2 class="text-[16px] font-bold text-[#F1F5F9] shrink-0">{{ i18n.t.logoTitle }}</h2>
       <div class="flex items-center gap-6 h-full">
-        <router-link to="/dashboard" class="text-[13px] text-[#94A3B8] hover:text-[#06B6D4] transition-colors h-full flex items-center font-medium">Nodes</router-link>
-        <router-link to="/dashboard" class="text-[13px] text-[#94A3B8] hover:text-[#06B6D4] transition-colors h-full flex items-center font-medium">Clusters</router-link>
-        <router-link to="/certificates" class="text-[13px] text-[#94A3B8] hover:text-[#06B6D4] transition-colors h-full flex items-center font-medium">Security</router-link>
+        <router-link to="/dashboard" class="text-[13px] text-[#94A3B8] hover:text-[#06B6D4] transition-colors h-full flex items-center font-medium">
+          {{ i18n.t.topnav.nodes }}
+        </router-link>
+        <router-link to="/dashboard" class="text-[13px] text-[#94A3B8] hover:text-[#06B6D4] transition-colors h-full flex items-center font-medium">
+          {{ i18n.t.topnav.clusters }}
+        </router-link>
+        <router-link to="/certificates" class="text-[13px] text-[#94A3B8] hover:text-[#06B6D4] transition-colors h-full flex items-center font-medium">
+          {{ i18n.t.topnav.security }}
+        </router-link>
       </div>
     </div>
     <div class="flex items-center gap-4">
