@@ -100,11 +100,12 @@ function initSqliteTables() {
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
 
+    // FIX: Escape single quote in DEFAULT 'Lets Encrypt'
     db.run(`CREATE TABLE IF NOT EXISTS certificates (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       domain TEXT NOT NULL,
       type TEXT DEFAULT 'SSL Certificate',
-      issuer TEXT DEFAULT 'Let\'s Encrypt',
+      issuer TEXT DEFAULT 'Lets Encrypt',
       expiryDate TEXT NOT NULL,
       daysLeft INTEGER NOT NULL,
       autoRenew INTEGER DEFAULT 1,
@@ -199,7 +200,10 @@ app.post('/api/servers', (req, res) => {
       'INSERT INTO servers (hostname, ip, port, username, authType, region, status, cpu, memory) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
       [finalHost, finalIp, port, username, authType, region, 'online', cpu, memory],
       function(err) {
-        if (err) return res.status(500).json({ error: err.message });
+        if (err) {
+          logEvent('error', 'Add server error to SQLite', { error: err.message });
+          return res.status(500).json({ error: err.message });
+        }
         logEvent('info', 'Server node added to SQLite DB', { id: this.lastID, hostname: finalHost, ip: finalIp });
         res.json({ id: this.lastID, hostname: finalHost, ip: finalIp, port, username, authType, region, status: 'online', cpu, memory });
       }
