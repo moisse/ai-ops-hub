@@ -1,0 +1,14 @@
+# Database
+data/
+*.db
+*.sqlite
+
+# Logs
+*.log
+logs/
+
+# Environment & Credentials
+.env
+.env.local
+*.key
+*.pem

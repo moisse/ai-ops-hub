@@ -65,13 +65,13 @@ export const zhCN: LocaleMessages = {
     dashboard: '仪表盘控制台',
     chat: 'AI 运维助手',
     terminal: 'Web SSH 终端 Monitor',
-    certificates: '密钥与证书管理',
+    certificates: '证书管理',
     settings: '系统设置中心'
   },
   topnav: {
     nodes: '服务器节点',
     clusters: '集群管理',
-    security: '安全防护'
+    security: '证书管理'
   },
   dashboard: {
     title: '服务器节点集群监控 (Nodes)',
@@ -97,7 +97,7 @@ export const zhCN: LocaleMessages = {
     addSession: '新建 SSH 会话'
   },
   certificates: {
-    title: '密钥与 SSL/TLS 证书',
+    title: '证书管理 (SSL / SSH / Domain)',
     subtitle: '跨云基础设施安全证书与 SSH 密钥生命周期管理',
     scan: '全面安全扫描',
     searchPlaceholder: '搜索证书名称、域名或服务器...',
@@ -124,13 +124,13 @@ export const enUS: LocaleMessages = {
     dashboard: 'Dashboard',
     chat: 'AI Assistant',
     terminal: 'Web SSH Terminal',
-    certificates: 'Certificates & Keys',
+    certificates: 'Certificates',
     settings: 'System Settings'
   },
   topnav: {
     nodes: 'Nodes',
     clusters: 'Clusters',
-    security: 'Security'
+    security: 'Certificates'
   },
   dashboard: {
     title: 'Server Node Cluster Monitor (Nodes)',
@@ -156,7 +156,7 @@ export const enUS: LocaleMessages = {
     addSession: 'New SSH Session'
   },
   certificates: {
-    title: 'Keys & SSL/TLS Certificates',
+    title: 'Certificates (SSL / SSH / Domain)',
     subtitle: 'Multi-cloud Infrastructure Security & Expiry Management',
     scan: 'Full Security Scan',
     searchPlaceholder: 'Search certificate name, domain, or host...',

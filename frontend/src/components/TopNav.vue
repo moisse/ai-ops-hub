@@ -38,12 +38,12 @@ onMounted(() => {
 
 <template>
   <nav class="hidden md:flex justify-between items-center px-8 w-full h-[56px] fixed top-0 right-0 z-40 bg-[#0B1120] border-b border-[#1E293B] pl-[260px]">
-    <!-- Left Navigation Links (Removed duplicate logo title) -->
+    <!-- Left Navigation Links -->
     <div class="flex items-center gap-6 h-full">
       <router-link to="/dashboard" class="text-[13px] text-[#94A3B8] hover:text-[#06B6D4] transition-colors h-full flex items-center font-medium">
         {{ i18n.t.topnav.nodes }}
       </router-link>
-      <router-link to="/dashboard" class="text-[13px] text-[#94A3B8] hover:text-[#06B6D4] transition-colors h-full flex items-center font-medium">
+      <router-link to="/clusters" class="text-[13px] text-[#94A3B8] hover:text-[#06B6D4] transition-colors h-full flex items-center font-medium">
         {{ i18n.t.topnav.clusters }}
       </router-link>
       <router-link to="/certificates" class="text-[13px] text-[#94A3B8] hover:text-[#06B6D4] transition-colors h-full flex items-center font-medium">

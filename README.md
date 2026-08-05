@@ -1,457 +1,113 @@
-<<<<<<< HEAD
-# ⚡ AI Ops Hub
+# 🤖 AI Ops Hub (AI 智能运维枢纽)
 
-**AI-Native Server Management Platform** — Manage your entire infrastructure through natural language.
+> **面向开发者与创业者的多云服务器监控、Web SSH 终端与大模型 AI 诊断中枢**
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Author](https://img.shields.io/badge/Author-moisse-4cd7f6?logo=github)](https://github.com/moisse)
-[![Vue 3](https://img.shields.io/badge/Vue-3.5-4FC08D?logo=vue.js&logoColor=white)](https://vuejs.org/)
-[![Node.js](https://img.shields.io/badge/Node.js-22-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.6-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.0-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Vue3](https://img.shields.io/badge/frontend-Vue%203%20%7C%20Vite%20%7C%20TailwindCSS-06B6D4.svg)
+![Backend](https://img.shields.io/badge/backend-Express%20%7C%20SQLite-10B981.svg)
+![Version](https://img.shields.io/badge/version-v1.0.0-orange.svg)
 
 ---
 
-## 💡 Why This Project
+## 📌 项目初衷与核心痛点
 
-I'm not a DevOps engineer. I'm a developer who ended up managing a handful of servers across different cloud providers — and it quickly became overwhelming.
+创始人 **Moisse Li**（上海该隐科技合伙人）在管理跨云基础设施（AWS / GCP / 腾讯云 / 阿里云 / Azure）时，总结了广大开发者与创业者的四大核心运维痛点：
 
-Every time I needed to check if a server was healthy, I had to SSH in, run a few commands, and remember which IP belonged to which service. When an SSL certificate expired unexpectedly, I'd scramble to figure out where it was and how to renew it. And God forbid I needed to troubleshoot something at 2 AM — by then I'd already forgotten half my SSH keys.
+1. **工具极度分散**：SSH 客户端、监控面板、SSL 证书追踪器各自独立，缺少统一管理入口；
+2. **凭据混淆丢失**：排障时经常遗忘服务器 IP、SSH 端口、登录用户名与密钥/密码；
+3. **证书过期警示**：SSL 证书或域名到期导致服务意外中断，缺乏提前告警；
+4. **排障门槛高**：凌晨服务器告警时，非专业 DevOps 工程师难以迅速定位 CPU 爆满与容器崩溃原因。
 
-I looked at existing tools, but they all assumed I was a sysadmin who lived in the terminal. I just wanted something simple: **one place to see everything, and a way to ask questions instead of memorizing commands.**
-
-So I built AI Ops Hub — not because the world needed another monitoring tool, but because I needed something that worked the way *I* think. If I can type *"why is server-03 slow?"* and get a real answer, that's a win.
-
-**What makes this different:**
--  **One interface** — Dashboard, SSH, AI chat, certificates, alerts — no more tab switching
--  **AI-first** — Ask questions in plain language, get real answers with actionable suggestions
--  **Self-hosted** — Your servers, your data, your control
--  **Cloud-agnostic** — GCP, AWS, Azure, on-premise — they're all just "servers" here
-
-This is a personal project built by a vibe coding beginner. If you're in the same boat — managing servers without a DevOps background — maybe this will help. And if you're a seasoned ops person, I'd love your feedback on what I'm missing.
-
-##  Screenshots
-
-### Dashboard — Real-time Server Overview
-
-![Dashboard](docs/screenshots/dashboard.png)
-
-Real-time CPU, memory, disk metrics across all servers with color-coded status indicators.
-
-### AI Chat — Natural Language Operations
-
-![AI Chat](docs/screenshots/ai-chat.png)
-
-Execute commands via natural language — *"Check memory on server-02"* or *"Why is my app slow?"*
-
-### Web SSH — Browser-based Terminal
-
-![Terminal](docs/screenshots/terminal.png)
-
-Browser-based terminal with multi-tab support, no password memorization needed.
-
-### Certificate Management
-
-![Certificates](docs/screenshots/certificates.png)
-
-Auto-scan SSH keys, SSL certs, and domain expiry with proactive alerts.
-
-### Settings
-
-![Settings](docs/screenshots/settings.png)
-
-Server management, notification configuration, and security settings.
-
-## ✨ Features
-
-### 🎯 Core Capabilities
-
-| Feature | Description |
-|---------|-------------|
-| **Unified Dashboard** | Real-time CPU, memory, disk metrics across all servers with color-coded status indicators |
-| **AI Chat Operations** | Execute commands via natural language — *"Check memory on server-02"* or *"Why is my app slow?"* |
-| **Web SSH Terminal** | Browser-based terminal with multi-tab support, no password memorization needed |
-| **Certificate Management** | Auto-scan SSH keys, SSL certs, and domain expiry with proactive alerts (30/7/1 days) |
-| **Real-time Monitoring** | Netdata integration for second-level precision performance metrics |
-| **Smart Alerts** | Feishu/Telegram webhook notifications for anomalies and expiring certificates |
-
-### 🎨 Design System
-
-- **Theme**: Deep Space Dark (#0B1120 background)
-- **Accent**: Cyan (#06B6D4) for primary actions
-- **Status Colors**: Green (online), Amber (warning), Red (offline)
-- **Typography**: Inter (UI) + JetBrains Mono (code/terminal)
-- **Animations**: Card hover lift, status dot pulse, page fade-in
+**AI Ops Hub** 旨在提供一个 100% 纯净初始、一键部署、界面极具科技感、内置 Cherry Studio 风格大模型与 SysAdmin 运维 Skill 的一体化控制中心。
 
 ---
 
-## 🏗️ Architecture
+## 🚀 核心功能特性 (Features)
 
-```
-┌─────────────────────────────────────────────────────────────────
-│                        Frontend (Vue 3)                         │
-│  ──────────┐  ┌──────────  ┌──────────┐  ┌──────────────┐  │
-│  │Dashboard │  │ AI Chat  │  │ Terminal │  │ Certificates │  │
-│  ──────────┘  └──────────┘  └──────────┘  └──────────────┘  │
-└────────────────────────┬────────────────────────────────────────┘
-                         │ REST API + WebSocket
-┌────────────────────────▼────────────────────────────────────────┐
-│                       Backend (Node.js)                          │
-│  ┌──────────┐  ┌──────────  ┌──────────┐  ┌──────────────┐  │
-│  │Servers   │  │ SSH      │  │ AI Chat  │  │ Certificates │  │
-│  │CRUD      │  │Gateway   │  │Proxy     │  │Scanner       │  │
-│  ──────────┘  └──────────┘  └──────────┘  └──────────────┘  │
-└────────────────────────────────────────────────────────────────┘
-                         │
-┌────────────────────────▼────────────────────────────────────────
-│                      Infrastructure Layer                        │
-│  ──────────┐  ┌──────────  ┌──────────┐  ┌──────────────┐  │
-│  │Server-01 │  │Server-02 │  │Server-03 │  │Server-N      │  │
-│  │(GCP)     │  │(AWS)     │  │(Azure)   │  │(...)         │  │
-│  └──────────  └──────────┘  └──────────┘  └──────────────┘  │
-└─────────────────────────────────────────────────────────────────┘
-```
+### 1. 🛡️ 首次登录超级管理员初始化向导 (Super Admin Setup Wizard)
+- **100% 纯净系统**：部署初始化时数据库为空，无任何写死假数据；
+- **自主设定超管账号与密码**：首次访问自动进入初始化向导，设定管理员凭据；
+- **JWT / Session 路由拦截**：未登录用户强行访问自动重定向至 `/login`。
 
----
+### 2. 🎛️ Cherry Studio 风格多厂商大模型配置中枢 (LLM Provider Management)
+- **主流大模型全适配**：
+  - **国内厂商**：通义千问 (Qwen / DashScope)、DeepSeek (深度求索)、智谱清言 (GLM-4)、月之暗面 (Kimi / Moonshot)、字节豆包 (Doubao)；
+  - **国外与本地模型**：OpenAI (GPT-4o)、Anthropic (Claude 3.5 Sonnet)、Google Gemini、Ollama (本地私有化大模型)；
+- **探针检测与健康指示**：支持一键 `[🔗 测试连接]`，并在顶栏常驻显示活动模型与连通指示灯（`🤖 AI 模型: DeepSeek-V3 🟢`）。
 
-## 🚀 Quick Start
+### 3. 🔑 专业 SSH 凭据服务器管理 (Server CRUD)
+- **全套工业级参数**：支持配置 Hostname、IP / 域名、**SSH 端口 (默认 22)**、**登录用户名 (root/ubuntu)**；
+- **双鉴权模式**：支持密码验证 (Password) 与 SSH 私钥 (Private Key) 验证；
+- **一键探针检测**：提供 `[🔗 测试 SSH 连通性]` 按钮。
 
-### Prerequisites
+### 4. 🌐 多云集群自动分组与负载看板 (Cloud Clusters)
+- **多云归类**：按 AWS、GCP、腾讯云、阿里云、Azure / 私有云自动进行集群分组；
+- **集群资源看板**：实时聚合显示集群节点数、平均 CPU 占用、平均内存占用与 Ping 延迟。
 
-- Node.js >= 22
-- npm >= 10
-- Git
+### 5. 🔒 证书管理与智能自动解析 (Certificates & Auto-Inspect)
+- **文案无歧义**：聚焦 SSL 证书、SSH Key 与域名生命周期管理；
+- **智能自动解析**：输入域名或粘贴证书内容时，自动识别类型并推算到期时间与剩余天数；
+- **到期提醒**：提供 **“开启到期前 30 天自动化告警提醒”** 开关。
 
-### Installation
-
-```bash
-# 1. Clone the repository
-git clone https://github.com/moisse/ai-ops-hub.git
-cd ai-ops-hub
-
-# 2. Install backend dependencies
-cd backend
-npm install
-
-# 3. Install frontend dependencies
-cd ../frontend
-npm install
-
-# 4. Configure environment variables
-cp backend/.env.example backend/.env
-# Edit backend/.env with your configuration
-
-# 5. Start development servers
-cd backend && npm run dev      # API runs on http://localhost:3000
-cd ../frontend && npm run dev  # UI runs on http://localhost:5173
-```
-
-### Production Deployment
-
-```bash
-# Build frontend
-cd frontend
-npm run build
-
-# Start backend in production
-cd ../backend
-NODE_ENV=production npm start
-```
+### 6. ⚡ 内置 DevOps SRE 运维 Skill 提示词库 (SysAdmin AI Skills)
+- **专业提示词**：注入 SysAdmin 专家级 Persona；
+- **一键技能加载**：
+  - 🛠️ `[CPU/内存泄漏排查]`
+  - 🚀 `[Docker 容器崩盘诊断]`
+  - 🔒 `[SSL 证书免费续期脚本生成]`
+  - ⚡ `[Nginx 反向代理配置生成]`
+  - 🧹 `[Linux 磁盘空间安全清理]`
 
 ---
 
-## 📁 Project Structure
+## 🛠️ 技术架构 (Tech Stack)
 
 ```
 ai-ops-hub/
-├── frontend/                 # Vue 3 + TypeScript SPA
+├── frontend/             # Vue 3 + Vite + Tailwind CSS + Pinia + Vue Router
 │   ├── src/
-│   │   ├── components/       # Reusable UI components
-│   │   │   ├── ServerCard.vue
-│   │   │   ├── StatCard.vue
-│   │   │   ├── Sidebar.vue
-│   │   │   └── TopNav.vue
-│   │   ├── pages/            # Route pages
-│   │   │   ├── Dashboard.vue
-│   │   │   ├── AIChat.vue
-│   │   │   ├── Terminal.vue
-│   │   │   ├── Certificates.vue
-│   │   │   └── Settings.vue
-│   │   ├── stores/           # Pinia state management
-│   │   ├── utils/            # API client, helpers
-│   │   │   └── api.ts
-│   │   ├── App.vue
-│   │   ├── main.ts
-│   │   ── style.css
-│   ├── index.html
-│   ├── vite.config.ts
-│   ├── tailwind.config.js
-│   └── package.json
-│
-├── backend/                  # Node.js + Express API
-│   ├── src/
-│   │   ├── routes/           # API route handlers
-│   │   │   ├── ssh.ts
-│   │   │   └── chat.ts
-│   │   └── index.js          # Main entry point
-│   ├── data/                 # SQLite database (gitignored)
-│   ├── .env.example          # Environment template
-│   ── package.json
-│
-├── docs/                     # Documentation
-├── .gitignore
-── CHANGELOG.md
-├── CONTRIBUTING.md
-├── LICENSE
-=======
-# AI Ops Hub Design System
-
-A modern, high-performance, dark-themed cyberpunk UI design system built for AI Operations, Infrastructure Management, and Mission-Critical Control Centers.
-
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![HTML5](https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white)
-![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=white)
-
----
-
-## ✨ Features
-
-- 🌌 **Deep Space Dark Theme**: Tailored for high-density monitoring and operations centers.
-- ⚡ **Tailwind CSS Powered**: Clean utility-first structure for modern web applications.
-- 🌐 **Multi-Language Support**: Includes English, Bilingual (English/Chinese), and Chinese dashboard variants.
-- 📱 **Responsive & Mobile Ready**: Pre-built layouts optimized for mobile devices and wide command center displays.
-- 🛡️ **Zero Privacy Leaks**: Cleaned mock dataset with standard environment placeholders.
-
----
-
-## 📂 Project Architecture
-
-```
-ai-dashboard/
-├── stitch_ai_ops_hub_design_system/
-│   ├── ai_chat_ai_ops_hub/             # AI Assistant & Chat Interface
-│   ├── ai_chat_bilingual_ai_ops_hub/   # Bilingual AI Chat
-│   ├── certificates_ai_ops_hub/        # Keys & SSL/TLS Certificates Admin
-│   ├── certificates_bilingual_ai_ops_hub/
-│   ├── dashboard_ai_ops_hub/           # Primary Operations Dashboard
-│   ├── dashboard_bilingual_ai_ops_hub/ # Bilingual Main Dashboard
-│   ├── dashboard_chinese_ai_ops_hub/   # Chinese Main Dashboard
-│   ├── dashboard_mobile_ai_ops_hub/    # Mobile Dashboard Layout
-│   ├── dashboard_mobile_bilingual_ai_ops_hub/
-│   ├── login_ai_ops_hub/               # Secure Login Portal
-│   ├── settings_ai_ops_hub/            # System Settings & Key Management
-│   ├── settings_bilingual_ai_ops_hub/
-│   ├── terminal_ai_ops_hub/            # Live Web SSH/Terminal Monitor
-│   ├── terminal_bilingual_ai_ops_hub/
-│   └── user_profile_ai_ops_hub/        # User Profile & Security Center
-├── .gitignore
->>>>>>> 8bae3ef (fix: add deployment index.html and resolve tailwind cdn fallback styles)
-└── README.md
+│   │   ├── pages/        # Dashboard, Clusters, AIChat, Terminal, Certificates, Settings, Login
+│   │   ├── stores/       # LLM Store, i18n Store
+│   │   └── i18n/         # Bilingual Locales (zh-CN default / en)
+└── backend/              # Node.js + Express + better-sqlite3
+    └── src/index.js      # REST API & Auth Routes
 ```
 
 ---
 
-<<<<<<< HEAD
-## 🔌 API Documentation
+## 💻 快速部署指南 (Quick Start)
 
-### Servers
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET` | `/api/servers` | List all servers |
-| `POST` | `/api/servers` | Add new server |
-| `GET` | `/api/servers/:id` | Get server details |
-| `PUT` | `/api/servers/:id` | Update server |
-| `DELETE` | `/api/servers/:id` | Delete server |
-
-### SSH
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `POST` | `/api/ssh/connect` | Establish SSH connection |
-| `POST` | `/api/ssh/disconnect` | Close SSH connection |
-| `POST` | `/api/ssh/execute` | Execute command on server |
-| `GET` | `/api/ssh/sessions` | List active sessions |
-
-### AI Chat
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `POST` | `/api/chat` | Send message to AI |
-| `GET` | `/api/chat/history` | Get conversation history |
-
-### Certificates
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET` | `/api/certificates` | List all certificates |
-| `GET` | `/api/certificates/expiring` | Get expiring soon |
-
----
-
-## ⚙️ Configuration
-
-### Environment Variables
-
-Copy `backend/.env.example` to `backend/.env` and configure:
-
-```env
-# Server Configuration
-PORT=3000
-NODE_ENV=development
-
-# Database
-DATABASE_URL=./data/ai-ops.db
-
-# AI Configuration (Hermes Agent)
-HERMES_API_URL=http://localhost:8080
-HERMES_API_KEY=your-api-key-here
-
-# Notification Webhooks (Optional)
-FEISHU_WEBHOOK_URL=https://open.feishu.cn/open-apis/bot/v2/hook/your-webhook-id
-TELEGRAM_BOT_TOKEN=your-telegram-bot-token
-TELEGRAM_CHAT_ID=your-chat-id
-
-# JWT Authentication
-JWT_SECRET=change-me-in-production
-JWT_EXPIRES_IN=7d
-```
-
----
-
-## 🗺️ Roadmap
-
-| Phase | Feature | Status | ETA |
-|-------|---------|--------|-----|
-| **Phase 1** | MVP Dashboard + Server CRUD | ✅ Done | — |
-| **Phase 2** | Web SSH Terminal | ✅ Done | — |
-| **Phase 3** | AI Chat Operations | ✅ Done | — |
-| **Phase 4** | Netdata Metrics Integration | 🔄 In Progress | 2026-08-12 |
-| **Phase 5** | Certificate Auto-scan | ⚪ Planned | — |
-| **Phase 6** | Batch Operations + Ansible | ⚪ Planned | — |
-| **Phase 7** | Mobile Responsive Layout |  Planned | — |
-| **Phase 8** | Docker Compose One-Click Deploy |  Planned | 2026-09-09 |
-
----
-
-## 🤝 Contributing
-
-We welcome contributions! Please follow these steps:
-
-1. **Fork** the repository
-2. **Create** a feature branch (`git checkout -b feat/your-feature`)
-3. **Commit** your changes (`git commit -m 'feat: add your-feature'`)
-4. **Push** to the branch (`git push origin feat/your-feature`)
-5. **Open** a Pull Request
-
-### Commit Convention
-
-We follow [Conventional Commits](https://www.conventionalcommits.org/):
-
-- `feat:` New feature
-- `fix:` Bug fix
-- `docs:` Documentation changes
-- `style:` Code style (formatting, no logic change)
-- `refactor:` Code refactoring
-- `test:` Test additions or changes
-- `chore:` Build process or tooling changes
-
-### Development Workflow
-
+### 1. 克隆代码仓库
 ```bash
-# Install dependencies
+git clone https://github.com/moisse/ai-ops-hub.git
+cd ai-ops-hub
+```
+
+### 2. 启动前端与后端 (开发模式)
+```bash
+# 启动后端
+cd backend
 npm install
+npm run dev
 
-# Run linter
-npm run lint
-
-# Run tests (when available)
-npm test
-
-# Build for production
-npm run build
-=======
-## 🚀 Getting Started
-
-Simply clone the repository and open any `code.html` in your web browser:
-
-```bash
-# Clone the repository
-git clone https://github.com/your-username/your-repo-name.git
-
-# Open the main dashboard in browser
-cd your-repo-name/stitch_ai_ops_hub_design_system/dashboard_ai_ops_hub
-open code.html
->>>>>>> 8bae3ef (fix: add deployment index.html and resolve tailwind cdn fallback styles)
+# 启动前端
+cd ../frontend
+npm install
+npm run dev
 ```
 
----
+### 3. 构建生产 bundle 并启动
+```bash
+cd frontend && npm run build
+cd ../backend && npm start
+```
 
-<<<<<<< HEAD
-## 🔒 Security
-
-- **SSH keys** are never stored in the database — only file paths
-- **All API endpoints** require JWT authentication (planned)
-- **Sensitive operations** (delete, restart, deploy) require explicit confirmation
-- **Audit log** records every command execution
-- **`.env` files** are gitignored — use `.env.example` as template
-
-### Security Best Practices
-
-1. Change `JWT_SECRET` in production
-2. Use strong passwords for database
-3. Enable HTTPS in production
-4. Regularly update dependencies
-5. Monitor audit logs for suspicious activity
+访问 `http://localhost:3000` 即可开启你的智能运维之旅！
 
 ---
 
-##  Tech Stack
+## 📄 许可证 (License)
 
-| Layer | Technology | Purpose |
-|-------|-----------|---------|
-| **Frontend Framework** | Vue 3.5 | Reactive UI |
-| **Language** | TypeScript 5.6 | Type safety |
-| **Styling** | Tailwind CSS 4.0 | Utility-first CSS |
-| **Build Tool** | Vite 6.0 | Fast HMR |
-| **State Management** | Pinia 2.2 | Vue store |
-| **Charts** | ECharts 5.5 | Data visualization |
-| **Terminal** | xterm.js 5.5 | Web terminal emulator |
-| **Icons** | Material Symbols | UI iconography |
-| **Fonts** | Inter + JetBrains Mono | UI + code typography |
-| **Backend Runtime** | Node.js 22 | JavaScript runtime |
-| **Web Framework** | Express 4.21 | HTTP server |
-| **Database** | SQLite (better-sqlite3) | Lightweight persistence |
-| **SSH Client** | ssh2 1.15 | Server connections |
+本项目基于 [MIT License](LICENSE) 开源发布。
 
----
-
-## 📝 License
-
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
-
----
-
-## 🙏 Acknowledgments
-
-- Design system generated with [Stitch](https://stitch.withgoogle.com/)
-- Terminal emulation powered by [xterm.js](https://xtermjs.org/)
-- Charts by [Apache ECharts](https://echarts.apache.org/)
-- Icons from [Material Symbols](https://fonts.google.com/icons)
-- Fonts by [Google Fonts](https://fonts.google.com/)
-
----
-
-## 📧 Contact
-
-- **GitHub Issues**: [Report bugs or request features](https://github.com/moisse/ai-ops-hub/issues)
-- **Discussions**: [Join the conversation](https://github.com/moisse/ai-ops-hub/discussions)
-
----
-
-**Made with ❤️ by Moisse Li**
-=======
-## 📄 License
-
-Distributed under the MIT License. See `LICENSE` for more information.
->>>>>>> 8bae3ef (fix: add deployment index.html and resolve tailwind cdn fallback styles)
+**Design & Developed by Moisse Li 2026**
