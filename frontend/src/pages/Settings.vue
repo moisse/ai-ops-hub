@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useI18nStore } from '../stores/useI18nStore'
-import { useLLMStore, LLMProvider } from '../stores/useLLMStore'
+import { useLLMStore } from '../stores/useLLMStore'
 
 const i18n = useI18nStore()
 const llm = useLLMStore()
@@ -141,7 +141,7 @@ selectProvider('zhipu')
       <span>{{ saveToast ? (i18n.currentLang === 'zh-CN' ? '配置已保存，已设为系统全局活动 AI 大模型！' : 'Saved as active model!') : webhookToast }}</span>
     </div>
 
-    <!-- Cherry Studio Inspired Three-Column Grid Body -->
+    <!-- Three-Column Grid Body -->
     <div class="grid grid-cols-1 md:grid-cols-12 gap-5 mt-4 flex-1 overflow-hidden">
       <!-- Column 1: Settings Navigation Categories (3 cols) -->
       <div class="md:col-span-3 bg-[#0F172A] border border-[#1E293B] rounded-2xl p-3 flex flex-col gap-1 shadow-lg h-full overflow-y-auto">
@@ -205,7 +205,6 @@ selectProvider('zhipu')
 
       <!-- Column 2: Providers List with Live Search (4 cols) -->
       <div v-if="activeTab === 'llm'" class="md:col-span-4 bg-[#0F172A] border border-[#1E293B] rounded-2xl p-3 flex flex-col gap-3 shadow-lg h-full overflow-hidden">
-        <!-- Live Search Box -->
         <div class="relative w-full shrink-0">
           <span class="material-symbols-outlined absolute left-3 top-2.5 text-[#64748B] text-sm">search</span>
           <input 
@@ -215,7 +214,6 @@ selectProvider('zhipu')
           />
         </div>
 
-        <!-- Providers Scrollable List -->
         <div class="flex-1 overflow-y-auto space-y-1.5 pr-1">
           <button
             v-for="p in filteredProviders"
@@ -233,7 +231,6 @@ selectProvider('zhipu')
               <span class="truncate font-medium">{{ p.name }}</span>
             </div>
 
-            <!-- ON / OFF Status Badge (Strict Real Probe Status) -->
             <div class="flex items-center gap-1.5 shrink-0">
               <span v-if="p.latency" class="text-[10px] font-mono text-[#10B981]">{{ p.latency }}ms</span>
               <span 
@@ -252,7 +249,6 @@ selectProvider('zhipu')
       <!-- Column 3: Detail Config Panel & Model Tree (5 cols) -->
       <div v-if="activeTab === 'llm'" class="md:col-span-5 bg-[#0F172A] border border-[#1E293B] rounded-2xl p-5 flex flex-col justify-between shadow-lg h-full overflow-y-auto">
         <div class="flex flex-col gap-4">
-          <!-- Header -->
           <div class="flex items-center justify-between border-b border-[#1E293B] pb-3">
             <div class="flex items-center gap-2">
               <span class="material-symbols-outlined text-[#06B6D4] text-xl">{{ currentProvider.icon }}</span>
@@ -263,7 +259,6 @@ selectProvider('zhipu')
             </span>
           </div>
 
-          <!-- API Key Form Field -->
           <div class="flex flex-col gap-1.5 text-xs">
             <div class="flex items-center justify-between">
               <label class="text-[#94A3B8] font-bold">API 密钥 (API Key / Access Token)</label>
@@ -289,7 +284,6 @@ selectProvider('zhipu')
             </div>
           </div>
 
-          <!-- Base URL Form Field -->
           <div class="flex flex-col gap-1.5 text-xs">
             <div class="flex items-center justify-between">
               <label class="text-[#94A3B8] font-bold">接口端点地址 (Base URL)</label>
@@ -304,17 +298,14 @@ selectProvider('zhipu')
             />
           </div>
 
-          <!-- Probe Locked / Custom Styled Model Dropdown -->
           <div class="flex flex-col gap-1.5 text-xs pt-2 border-t border-[#1E293B]">
             <label class="text-[#94A3B8] font-bold">活跃模型选择 (Active Model)</label>
 
-            <!-- Locked Warning Banner when Unverified -->
             <div v-if="currentProvider.status !== 'connected'" class="bg-[#F59E0B]/10 border border-[#F59E0B]/30 rounded-xl p-3 text-[11px] text-[#F59E0B] font-medium flex items-center gap-2">
               <span class="material-symbols-outlined text-sm">lock</span>
               <span>⚠️ 请先填写 API 密钥并点击右上角 [检测] 探针通过后解锁模型树</span>
             </div>
 
-            <!-- Standardized Custom Dropdown -->
             <div v-else class="relative w-full">
               <select 
                 v-model="editSelectedModel" 
@@ -334,13 +325,11 @@ selectProvider('zhipu')
             </div>
           </div>
 
-          <!-- Probe Message -->
           <div v-if="testMessage" class="text-xs p-3 rounded-xl bg-[#1E293B] border border-[#334155] text-[#10B981] font-mono leading-relaxed">
             {{ testMessage }}
           </div>
         </div>
 
-        <!-- Save Button -->
         <button 
           @click="saveLLMConfig" 
           class="w-full py-3 bg-[#06B6D4] text-[#0B1120] rounded-xl font-bold text-xs hover:opacity-90 transition-all cursor-pointer shadow-lg shadow-[#06B6D4]/20 mt-4 flex items-center justify-center gap-2"
@@ -411,19 +400,29 @@ selectProvider('zhipu')
         </div>
       </div>
 
-      <!-- About Tab -->
+      <!-- Pure Industrial Product Copy (No Personal Bio Mentions) -->
       <div v-if="activeTab === 'about' || activeTab === 'default_model'" class="md:col-span-9 bg-[#0F172A] border border-[#1E293B] rounded-2xl p-6 flex flex-col justify-between shadow-lg h-full overflow-y-auto text-xs leading-relaxed">
         <div class="flex flex-col gap-4">
           <h3 class="text-lg font-bold text-[#06B6D4] flex items-center gap-2">
             <span class="material-symbols-outlined">smart_toy</span> AI Ops Hub (v1.0.0)
           </h3>
           <p class="text-[#94A3B8]">
-            AI Ops Hub 是由创始人 Moisse Li (上海该隐科技合伙人) 发起的开源智能运维控制中枢。支持 Cherry Studio 风格三栏大模型中心、多云集群监控与系统 SRE 诊断技能。
+            AI Ops Hub 是一套工业级开源多云智能运维控制中枢，支持 AI Agent 辅助诊断、多云集群监控、Web SSH 终端与证书到期预警防护。
           </p>
+          <div class="grid grid-cols-2 gap-4 mt-2 bg-[#1E293B]/40 p-4 rounded-xl border border-[#334155]">
+            <div>
+              <span class="text-[#06B6D4] font-bold block mb-1">Architecture</span>
+              <span class="text-[#94A3B8]">Vue 3 + TypeScript + Express + SQLite</span>
+            </div>
+            <div>
+              <span class="text-[#06B6D4] font-bold block mb-1">LLM Integration</span>
+              <span class="text-[#94A3B8]">DeepSeek, Qwen, Zhipu, OpenAI, Claude</span>
+            </div>
+          </div>
         </div>
         <div class="pt-4 border-t border-[#1E293B] text-[#64748B] font-mono flex justify-between">
-          <span>Author: Moisse Li</span>
-          <span>Design by Moisse 2026</span>
+          <span>License: MIT Open Source</span>
+          <span>Version: v1.0.0 Standard</span>
         </div>
       </div>
     </div>

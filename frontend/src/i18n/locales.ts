@@ -1,4 +1,6 @@
-export interface LocaleMessages {
+export interface LocaleMessage {
+  title: string;
+  subtitle: string;
   logoTitle: string;
   missionControl: string;
   serverHealthOptimal: string;
@@ -10,20 +12,19 @@ export interface LocaleMessages {
     settings: string;
   };
   topnav: {
-    nodes: string;
     clusters: string;
-    security: string;
+    certificates: string;
   };
   dashboard: {
     title: string;
     subtitle: string;
+    addServer: string;
     totalServers: string;
     online: string;
     warning: string;
     offline: string;
     uptime: string;
     proxyNodes: string;
-    addServer: string;
   };
   chat: {
     title: string;
@@ -35,21 +36,11 @@ export interface LocaleMessages {
   terminal: {
     title: string;
     subtitle: string;
-    addSession: string;
   };
   certificates: {
     title: string;
     subtitle: string;
-    scan: string;
-    searchPlaceholder: string;
-    allTypes: string;
-    allStatus: string;
-    name: string;
-    type: string;
-    server: string;
-    expiryDate: string;
-    daysLeft: string;
-    status: string;
+    addCert: string;
   };
   settings: {
     title: string;
@@ -57,125 +48,109 @@ export interface LocaleMessages {
   };
 }
 
-export const zhCN: LocaleMessages = {
-  logoTitle: 'AI Ops 智能运维枢纽',
-  missionControl: '任务控制中心',
-  serverHealthOptimal: '服务状态: 优良',
+export const zhCN: LocaleMessage = {
+  title: "AI Ops 智能运维枢纽",
+  subtitle: "基于 LLM 大模型的多云服务器监控与控制面板",
+  logoTitle: "AI Ops 智能运维枢纽",
+  missionControl: "任务控制中心",
+  serverHealthOptimal: "服务状态: 优良",
   nav: {
-    dashboard: '仪表盘控制台',
-    chat: 'AI 运维助手',
-    terminal: 'Web SSH 终端 Monitor',
-    certificates: '证书管理',
-    settings: '系统设置中心'
+    dashboard: "仪表盘控制台",
+    chat: "AI 运维助手",
+    terminal: "SSH 终端",
+    certificates: "证书管理",
+    settings: "系统设置中心"
   },
   topnav: {
-    nodes: '服务器节点',
-    clusters: '集群管理',
-    security: '证书管理'
+    clusters: "集群管理",
+    certificates: "证书管理"
   },
   dashboard: {
-    title: '服务器节点集群监控 (Nodes)',
-    subtitle: '多云 Server 监控、资源实时监控与 Web SSH/AI 诊断入口',
-    totalServers: '服务器总数',
-    online: '在线节点',
-    warning: '告警节点',
-    offline: '离线节点',
-    uptime: '平均在线率',
-    proxyNodes: '托管服务器节点',
-    addServer: '添加服务器节点'
+    title: "多云服务器仪表盘",
+    titleSub: "Multi-Cloud Node Status",
+    subtitle: "实时监测 CPU、内存、网络及节点运行状态",
+    addServer: "添加服务器节点",
+    totalServers: "总服务器节点",
+    online: "在线运行",
+    warning: "异常告警",
+    offline: "离线节点",
+    uptime: "节点在线率",
+    proxyNodes: "云服务器代理节点"
   },
   chat: {
-    title: 'AI 智能运维助手',
-    subtitle: '基于 LLM 大模型的实时日志诊断与自然语言指令控制',
-    allClusters: '全部服务器集群',
-    placeholder: '输入运维指令或询问大模型 (如: "分析 server-03 异常原因")...',
-    send: '发送指令'
+    title: "AI 智能运维助手",
+    subtitle: "基于 LLM 大模型的实时日志诊断与自然语言指令控制",
+    allClusters: "全部服务器集群",
+    placeholder: "向 AI Ops Agent 描述问题（例如：排查 CPU 占用过高，或删除域名证书）...",
+    send: "发送指令"
   },
   terminal: {
-    title: 'Web SSH 终端 Monitor',
-    subtitle: '基于 WebSockets 的跨云服务器在线 SSH 会话终端',
-    addSession: '新建 SSH 会话'
+    title: "SSH 终端",
+    subtitle: "基于 WebSockets 的跨云服务器在线 SSH 会话终端"
   },
   certificates: {
-    title: '证书管理 (SSL / SSH / Domain)',
-    subtitle: '跨云基础设施安全证书与 SSH 密钥生命周期管理',
-    scan: '全面安全扫描',
-    searchPlaceholder: '搜索证书名称、域名或服务器...',
-    allTypes: '所有类型',
-    allStatus: '所有状态',
-    name: '证书/密钥名称',
-    type: '类型',
-    server: '关联服务器',
-    expiryDate: '到期日期',
-    daysLeft: '剩余天数',
-    status: '安全状态'
+    title: "证书管理",
+    subtitle: "SSL/TLS 证书、域名及 SSH 密钥安全到期预警防护",
+    addCert: "添加证书/域名防护"
   },
   settings: {
-    title: '系统参数设置',
-    subtitle: 'API 密钥配置、集群端点映射与告警阈值'
+    title: "系统设置中心",
+    subtitle: "管理 API 密钥、LLM 大模型提供商、系统常规选项及告警 Notifications"
   }
 }
 
-export const enUS: LocaleMessages = {
-  logoTitle: 'AI Ops Hub',
-  missionControl: 'Mission Control Center',
-  serverHealthOptimal: 'Server Health: Optimal',
+export const enUS: LocaleMessage = {
+  title: "AI Ops Control Center",
+  subtitle: "LLM-Powered Multi-Cloud Server Monitoring & Control Panel",
+  logoTitle: "AI Ops Hub",
+  missionControl: "Mission Control Center",
+  serverHealthOptimal: "System Health: Optimal",
   nav: {
-    dashboard: 'Dashboard',
-    chat: 'AI Assistant',
-    terminal: 'Web SSH Terminal',
-    certificates: 'Certificates',
-    settings: 'System Settings'
+    dashboard: "Dashboard",
+    chat: "AI Assistant",
+    terminal: "SSH Terminal",
+    certificates: "Certificates",
+    settings: "Settings"
   },
   topnav: {
-    nodes: 'Nodes',
-    clusters: 'Clusters',
-    security: 'Certificates'
+    clusters: "Clusters",
+    certificates: "Certificates"
   },
   dashboard: {
-    title: 'Server Node Cluster Monitor (Nodes)',
-    subtitle: 'Multi-cloud Server Infrastructure & AI Diagnostics',
-    totalServers: 'Total Servers',
-    online: 'Online',
-    warning: 'Warning',
-    offline: 'Offline',
-    uptime: 'Uptime Rate',
-    proxyNodes: 'Managed Server Nodes',
-    addServer: 'Add Server Node'
+    title: "Multi-Cloud Dashboard",
+    titleSub: "Multi-Cloud Node Status",
+    subtitle: "Real-time monitoring for CPU, Memory, Network & Server Node status",
+    addServer: "Add Server Node",
+    totalServers: "Total Servers",
+    online: "Online",
+    warning: "Warning",
+    offline: "Offline",
+    uptime: "Node Uptime Rate",
+    proxyNodes: "Cloud Server Proxy Nodes"
   },
   chat: {
-    title: 'AI Operations Assistant',
-    subtitle: 'LLM-Powered Real-time Diagnostics & Natural Language Ops',
-    allClusters: 'All Server Clusters',
-    placeholder: 'Type ops command or ask LLM (e.g., "Why is node-03 slow?")...',
-    send: 'Send'
+    title: "AI Ops Assistant",
+    subtitle: "Real-time Log Diagnosis & Natural Language Control via LLMs",
+    allClusters: "All Cloud Clusters",
+    placeholder: "Ask AI Ops Agent (e.g. diagnose memory leak, or renew SSL certs)...",
+    send: "Send Directive"
   },
   terminal: {
-    title: 'Web SSH Terminal Monitor',
-    subtitle: 'WebSocket-based Multi-Cloud Server Web SSH Console',
-    addSession: 'New SSH Session'
+    title: "SSH Terminal",
+    subtitle: "Cross-cloud WebSockets Online SSH Session Terminal"
   },
   certificates: {
-    title: 'Certificates (SSL / SSH / Domain)',
-    subtitle: 'Multi-cloud Infrastructure Security & Expiry Management',
-    scan: 'Full Security Scan',
-    searchPlaceholder: 'Search certificate name, domain, or host...',
-    allTypes: 'All Types',
-    allStatus: 'All Status',
-    name: 'Certificate/Key Name',
-    type: 'Type',
-    server: 'Associated Server',
-    expiryDate: 'Expiry Date',
-    daysLeft: 'Days Left',
-    status: 'Status'
+    title: "Certificates",
+    subtitle: "SSL/TLS Certs, Domain & SSH Keys Expiry Warning System",
+    addCert: "Add Cert/Domain Guard"
   },
   settings: {
-    title: 'System Settings',
-    subtitle: 'API Key Configuration & Alert Thresholds'
+    title: "System Settings",
+    subtitle: "Manage API Keys, LLM Providers, General Options & Alarm Notifications"
   }
 }
 
 export const messages = {
   'zh-CN': zhCN,
-  'en': enUS
+  'en-US': enUS
 }

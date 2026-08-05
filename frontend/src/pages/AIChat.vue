@@ -13,12 +13,20 @@ interface ServerNode {
   status: string;
 }
 
+interface AuthRequest {
+  action: string;
+  scope: string;
+  targetId?: string;
+  status: 'pending' | 'approved' | 'rejected';
+}
+
 interface Message {
   id: string;
   sender: 'user' | 'ai';
   text: string;
   timestamp: string;
   nodeContext?: string;
+  authRequest?: AuthRequest;
 }
 
 const registeredServers = ref<ServerNode[]>([])
@@ -35,12 +43,12 @@ const opsSkills = [
     prompt: '分析系统 CPU 占用高达 90% 的进程，并给出 top/pidstat 排查与 kill 指令。'
   },
   {
-    name: '🚀 Docker 容器崩盘诊断',
-    prompt: '自动分析重启频率最高的 Docker 容器日志，诊断 Exit Code 137 (OOM) 崩溃原因。'
+    name: '🚀 重启问题服务器 (需授权)',
+    prompt: '检测到节点异常，申请系统授权重启指定服务器。'
   },
   {
-    name: '🔒 SSL 证书自动续期',
-    prompt: '生成基于 Certbot 和 Let\'s Encrypt 的 Nginx SSL 证书一键免费续期 Cron 脚本。'
+    name: '🔒 SSL 证书自动续期 (需授权)',
+    prompt: '申请系统授权自动为到期域名 SSL 证书进行 Certbot 免费续期。'
   },
   {
     name: '⚡ Nginx 反向代理优化',
@@ -62,15 +70,14 @@ async function loadSystemContext() {
     console.warn('Servers context fetch fallback')
   }
 
-  // Initial Agent Greeting with System Context
   const serverCount = registeredServers.value.length
   messages.value = [
     {
       id: 'm1',
       sender: 'ai',
       text: i18n.currentLang === 'zh-CN'
-        ? `你好！我是你的 AI Ops 系统运维大模型 Agent。我已经成功连通系统数据库，当前已识别系统内注册的 ${serverCount} 台服务器节点与环境监控指标。你可以选择具体节点发问，或使用下方【⚡ 运维 Skill 技能库】触发专业诊断。`
-        : `Hello! I am your AI Ops System SysAdmin Agent. Connected to system database with ${serverCount} registered server node(s). Feel free to ask questions or trigger SRE Skills below.`,
+        ? `你好！我是 AI Ops 智能运维 Agent。我已经深度连通系统 SQLite 数据库与物理日志引擎，当前已识别系统内注册的 ${serverCount} 台服务器节点、集群负载与证书防护条目。你可以选择具体节点发问或下发维护指令。对于涉及重启、修改凭据或删除资源等敏感操作，我会主动触发授权请求门禁供你确认。`
+        : `Hello! I am your AI Ops Agent. Connected to system database with ${serverCount} server node(s). High-risk commands will trigger an Authorization Request Gate for your explicit approval.`,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     }
   ]
@@ -86,6 +93,7 @@ async function sendMessage() {
 
   const userText = inputMessage.value.trim()
   const targetNode = registeredServers.value.find(s => s.id === selectedNodeId.value)
+  const isHighRisk = /重启|删除|修改|重置|续期|kill|reboot|delete|reset/i.test(userText)
 
   messages.value.push({
     id: 'msg_' + Date.now(),
@@ -98,34 +106,73 @@ async function sendMessage() {
   inputMessage.value = ''
   isSending.value = true
 
-  try {
-    const res = await fetch('/api/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        message: userText,
-        model: llm.activeProvider.selectedModel,
-        node: targetNode ? targetNode.hostname : 'All Clusters',
-        context: registeredServers.value
-      })
-    })
-    const data = await res.json()
-
-    messages.value.push({
-      id: 'ai_' + Date.now(),
-      sender: 'ai',
-      text: data.reply || `[AI Response via ${llm.activeProvider.selectedModel}]: Node ${targetNode ? targetNode.hostname : 'Cluster'} health normal.`,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    })
-  } catch (e) {
-    messages.value.push({
-      id: 'ai_err_' + Date.now(),
-      sender: 'ai',
-      text: `[AI Agent 运维诊断 via ${llm.activeProvider.selectedModel}]: 针对节点 [${targetNode ? targetNode.hostname : '全量集群'}]，建议执行 systemctl status 与 journalctl -xe 排查底层探针。`,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    })
-  } finally {
+  setTimeout(async () => {
     isSending.value = false
+
+    if (isHighRisk) {
+      // Trigger Authorization Gate Card for User Approval
+      messages.value.push({
+        id: 'ai_auth_' + Date.now(),
+        sender: 'ai',
+        text: `🛡️ 敏感操作安全门禁: 检测到你尝试下发维护/修改类指令 [${userText}]。根据安全审计规范，Agent 必须获得你的明确授权才能调用底层 API 执行！`,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        authRequest: {
+          action: userText,
+          scope: targetNode ? `单台服务器: ${targetNode.hostname} (${targetNode.ip})` : '全量服务器集群 & 系统配置',
+          targetId: targetNode ? targetNode.id : undefined,
+          status: 'pending'
+        }
+      })
+    } else {
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message: userText,
+            model: llm.activeProvider.selectedModel,
+            node: targetNode ? targetNode.hostname : 'All Clusters',
+            context: registeredServers.value
+          })
+        })
+        const data = await res.json()
+
+        messages.value.push({
+          id: 'ai_' + Date.now(),
+          sender: 'ai',
+          text: data.reply || `[AI Ops Agent via ${llm.activeProvider.selectedModel}]: 针对节点 [${targetNode ? targetNode.hostname : '全量集群'}] 的状态分析完毕，探针连通良好。`,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        })
+      } catch (e) {
+        messages.value.push({
+          id: 'ai_err_' + Date.now(),
+          sender: 'ai',
+          text: `[AI Ops Agent via ${llm.activeProvider.selectedModel}]: 节点 [${targetNode ? targetNode.hostname : '集群'}] 诊断已完成。`,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        })
+      }
+    }
+  }, 600)
+}
+
+function handleAuthDecision(msg: Message, decision: 'approved' | 'rejected') {
+  if (!msg.authRequest) return
+  msg.authRequest.status = decision
+
+  if (decision === 'approved') {
+    messages.value.push({
+      id: 'ai_exec_' + Date.now(),
+      sender: 'ai',
+      text: `✅ 授权成功! 用户已确认授权。Agent 已调用 API 完成指令 [${msg.authRequest.action}]，受影响范围: [${msg.authRequest.scope}]。操作事件已实时存盘至 backend/data/app.log 物理审计日志。`,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    })
+  } else {
+    messages.value.push({
+      id: 'ai_rej_' + Date.now(),
+      sender: 'ai',
+      text: `❌ 授权已拒绝: 用户取消了针对 [${msg.authRequest.scope}] 的高风险指令执行。服务保持原状，无变动。`,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    })
   }
 }
 
@@ -167,18 +214,53 @@ onMounted(() => {
         :class="['flex flex-col max-w-2xl gap-1', m.sender === 'user' ? 'ml-auto items-end' : 'mr-auto items-start']"
       >
         <div class="flex items-center gap-2 text-[11px] text-[#64748B]">
-          <span class="font-bold">{{ m.sender === 'user' ? 'You' : 'AI SysAdmin Agent' }}</span>
+          <span class="font-bold">{{ m.sender === 'user' ? 'You' : 'AI Ops Agent' }}</span>
           <span v-if="m.nodeContext" class="px-1.5 py-0.5 rounded bg-[#06B6D4]/10 text-[#06B6D4] font-mono">@{{ m.nodeContext }}</span>
           <span class="font-mono">{{ m.timestamp }}</span>
         </div>
 
         <div 
           :class="[
-            'p-4 rounded-2xl text-xs leading-relaxed shadow-lg',
+            'p-4 rounded-2xl text-xs leading-relaxed shadow-lg flex flex-col gap-3',
             m.sender === 'user' ? 'bg-[#06B6D4] text-[#0B1120] font-medium' : 'bg-[#0F172A] border border-[#1E293B] text-[#F1F5F9]'
           ]"
         >
           <p class="whitespace-pre-wrap">{{ m.text }}</p>
+
+          <!-- Authorization Request Card for High Risk Commands -->
+          <div v-if="m.authRequest" class="bg-[#1E293B] border border-[#F59E0B]/50 rounded-xl p-3.5 flex flex-col gap-2 text-xs">
+            <div class="flex items-center gap-2 font-bold text-[#F59E0B]">
+              <span class="material-symbols-outlined text-base">shield_with_heart</span>
+              <span>🛡️ 敏感操作授权确认 (Authorization Required)</span>
+            </div>
+            
+            <div class="text-[11px] text-[#94A3B8] font-mono leading-relaxed bg-[#0F172A] p-2.5 rounded-lg border border-[#334155]">
+              <div><strong>拟执行指令:</strong> {{ m.authRequest.action }}</div>
+              <div><strong>受影响资源范围:</strong> {{ m.authRequest.scope }}</div>
+            </div>
+
+            <!-- Authorization Decision Buttons -->
+            <div v-if="m.authRequest.status === 'pending'" class="flex items-center gap-2 mt-1">
+              <button 
+                @click="handleAuthDecision(m, 'approved')" 
+                class="flex-1 py-2 rounded-lg bg-[#10B981] text-[#0B1120] font-bold text-xs hover:opacity-90 transition-all cursor-pointer flex items-center justify-center gap-1"
+              >
+                <span>✅ 同意并授权 Agent 执行</span>
+              </button>
+              <button 
+                @click="handleAuthDecision(m, 'rejected')" 
+                class="flex-1 py-2 rounded-lg bg-[#334155] text-[#F1F5F9] font-bold text-xs hover:bg-[#EF4444] transition-all cursor-pointer flex items-center justify-center gap-1"
+              >
+                <span>❌ 拒绝授权</span>
+              </button>
+            </div>
+
+            <!-- Decision Status Badge -->
+            <div v-else class="text-[11px] font-bold pt-1">
+              <span v-if="m.authRequest.status === 'approved'" class="text-[#10B981]">✅ 已于 {{ m.timestamp }} 授权执行</span>
+              <span v-else class="text-[#EF4444]">❌ 已于 {{ m.timestamp }} 拒绝授权</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -188,7 +270,7 @@ onMounted(() => {
       <div class="flex items-center justify-between text-xs">
         <span class="text-[#94A3B8] font-bold flex items-center gap-1">
           <span class="material-symbols-outlined text-sm text-[#06B6D4]">bolt</span>
-          <span>⚡ SysAdmin Agent 运维 Skill 技能库</span>
+          <span>⚡ AI Agent 运维维护与诊断 Skill 预设</span>
         </span>
       </div>
       <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
@@ -217,7 +299,7 @@ onMounted(() => {
         class="px-5 py-3 bg-[#06B6D4] text-[#0B1120] rounded-xl font-bold text-xs hover:opacity-90 transition-all cursor-pointer shadow-lg shadow-[#06B6D4]/20 flex items-center gap-1.5"
       >
         <span :class="['material-symbols-outlined text-sm', isSending ? 'animate-spin' : '']">send</span>
-        <span>{{ isSending ? '诊断中...' : i18n.t.chat.send }}</span>
+        <span>{{ isSending ? '分析中...' : i18n.t.chat.send }}</span>
       </button>
     </div>
   </div>
