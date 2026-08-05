@@ -3,7 +3,7 @@ import { Router } from 'express';
 const router = Router();
 
 // AI Chat endpoint
-router.post('/chat', async (req, res) => {
+router.post('/', async (req, res) => {
   const { message, serverContext } = req.body;
 
   // Mock responses for demo

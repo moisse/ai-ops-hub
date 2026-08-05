@@ -155,3 +155,12 @@ app.get('/api/audit-log', (req, res) => {
 app.listen(PORT, () => {
   console.log(`AI Ops Hub API running on http://localhost:${PORT}`);
 });
+
+// Serve frontend static files
+const frontendDist = path.join(__dirname, '../../frontend/dist');
+app.use(express.static(frontendDist));
+
+// SPA fallback
+app.get('*', (req, res) => {
+  res.sendFile(path.join(frontendDist, 'index.html'));
+});
