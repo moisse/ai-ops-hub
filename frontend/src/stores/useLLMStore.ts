@@ -91,7 +91,7 @@ export const useLLMStore = defineStore('llm', () => {
     },
     {
       id: 'ernie',
-      name: '百度千帆 (Baidu Qianfan)',
+      name: '百度云千帆 (Baidu Qianfan)',
       category: 'domestic',
       icon: 'travel_explore',
       baseUrl: 'https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop',
@@ -138,6 +138,18 @@ export const useLLMStore = defineStore('llm', () => {
       status: 'unconfigured'
     },
     {
+      id: 'xai_grok',
+      name: 'xAI Grok',
+      category: 'international',
+      icon: 'close',
+      baseUrl: 'https://api.x.ai/v1',
+      defaultBaseUrl: 'https://api.x.ai/v1',
+      apiKey: '',
+      selectedModel: 'grok-2',
+      availableModels: ['grok-2', 'grok-2-vision', 'grok-beta'],
+      status: 'unconfigured'
+    },
+    {
       id: 'openai',
       name: 'OpenAI',
       category: 'international',
@@ -175,7 +187,7 @@ export const useLLMStore = defineStore('llm', () => {
     },
     {
       id: 'groq',
-      name: 'Groq (超高速推理)',
+      name: 'Groq (LPU 高速推理)',
       category: 'international',
       icon: 'speed',
       baseUrl: 'https://api.groq.com/openai/v1',
@@ -195,7 +207,7 @@ export const useLLMStore = defineStore('llm', () => {
       apiKey: '',
       selectedModel: 'deepseek-r1:7b',
       availableModels: ['deepseek-r1:7b', 'qwen2.5-coder:7b', 'llama3.3:70b'],
-      status: 'unconfigured' // Strict: unconfigured until tested
+      status: 'unconfigured'
     }
   ])
 

@@ -6,7 +6,7 @@ import { useLLMStore } from '../stores/useLLMStore'
 const i18n = useI18nStore()
 const llm = useLLMStore()
 
-const activeTab = ref<'llm' | 'default_model' | 'general' | 'notifications' | 'about'>('llm')
+const activeTab = ref<'llm' | 'general' | 'notifications' | 'about'>('llm')
 const selectedProviderId = ref('zhipu')
 const providerSearch = ref('')
 
@@ -135,213 +135,211 @@ selectProvider('zhipu')
       </div>
     </div>
 
+    <!-- Top Horizontal Tab Bar (No Vertical Column 1) -->
+    <div class="flex items-center gap-2 mt-4 shrink-0 border-b border-[#1E293B] pb-3">
+      <button 
+        @click="activeTab = 'llm'"
+        :class="[
+          'flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs transition-all cursor-pointer border',
+          activeTab === 'llm'
+            ? 'bg-[#06B6D4]/15 border-[#06B6D4] text-[#06B6D4] shadow-md'
+            : 'bg-[#0F172A] border-[#1E293B] text-[#94A3B8] hover:bg-[#1E293B] hover:text-[#F1F5F9]'
+        ]"
+      >
+        <span class="material-symbols-outlined text-sm">smart_toy</span>
+        <span>大模型配置中枢 (LLM Providers)</span>
+      </button>
+
+      <button 
+        @click="activeTab = 'general'"
+        :class="[
+          'flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs transition-all cursor-pointer border',
+          activeTab === 'general'
+            ? 'bg-[#06B6D4]/15 border-[#06B6D4] text-[#06B6D4] shadow-md'
+            : 'bg-[#0F172A] border-[#1E293B] text-[#94A3B8] hover:bg-[#1E293B] hover:text-[#F1F5F9]'
+        ]"
+      >
+        <span class="material-symbols-outlined text-sm">settings</span>
+        <span>常规偏好设置 (General)</span>
+      </button>
+
+      <button 
+        @click="activeTab = 'notifications'"
+        :class="[
+          'flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs transition-all cursor-pointer border',
+          activeTab === 'notifications'
+            ? 'bg-[#06B6D4]/15 border-[#06B6D4] text-[#06B6D4] shadow-md'
+            : 'bg-[#0F172A] border-[#1E293B] text-[#94A3B8] hover:bg-[#1E293B] hover:text-[#F1F5F9]'
+        ]"
+      >
+        <span class="material-symbols-outlined text-sm">notifications</span>
+        <span>告警通知 (Webhook)</span>
+      </button>
+
+      <button 
+        @click="activeTab = 'about'"
+        :class="[
+          'flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs transition-all cursor-pointer border',
+          activeTab === 'about'
+            ? 'bg-[#06B6D4]/15 border-[#06B6D4] text-[#06B6D4] shadow-md'
+            : 'bg-[#0F172A] border-[#1E293B] text-[#94A3B8] hover:bg-[#1E293B] hover:text-[#F1F5F9]'
+        ]"
+      >
+        <span class="material-symbols-outlined text-sm">info</span>
+        <span>关于 AI Ops Hub</span>
+      </button>
+    </div>
+
     <!-- Toast Banner -->
     <div v-if="saveToast || webhookToast" class="mt-2 bg-[#10B981]/15 border border-[#10B981]/40 rounded-xl p-3 text-xs text-[#10B981] font-bold flex items-center gap-2 animate-pulse shrink-0">
       <span class="material-symbols-outlined text-sm">check_circle</span>
       <span>{{ saveToast ? (i18n.currentLang === 'zh-CN' ? '配置已保存，已设为系统全局活动 AI 大模型！' : 'Saved as active model!') : webhookToast }}</span>
     </div>
 
-    <!-- Three-Column Grid Body -->
-    <div class="grid grid-cols-1 md:grid-cols-12 gap-5 mt-4 flex-1 overflow-hidden">
-      <!-- Column 1: Settings Navigation Categories (3 cols) -->
-      <div class="md:col-span-3 bg-[#0F172A] border border-[#1E293B] rounded-2xl p-3 flex flex-col gap-1 shadow-lg h-full overflow-y-auto">
-        <span class="text-[11px] text-[#64748B] font-bold px-3 py-1 uppercase">配置中心 (Settings)</span>
-        
-        <button 
-          @click="activeTab = 'llm'"
-          :class="[
-            'flex items-center gap-2.5 p-3 rounded-xl transition-all cursor-pointer text-xs w-full text-left font-bold',
-            activeTab === 'llm' ? 'bg-[#06B6D4]/15 text-[#06B6D4] border-l-4 border-[#06B6D4]' : 'text-[#94A3B8] hover:bg-[#1E293B] hover:text-[#F1F5F9]'
-          ]"
-        >
-          <span class="material-symbols-outlined text-base">smart_toy</span>
-          <span>{{ i18n.currentLang === 'zh-CN' ? '模型服务 (LLM Providers)' : 'LLM Providers' }}</span>
-        </button>
+    <!-- Contextual Content Body -->
+    <div class="mt-3 flex-1 overflow-hidden">
+      <!-- Tab 1: LLM Providers Cherry Studio Two-Column Grid -->
+      <div v-if="activeTab === 'llm'" class="grid grid-cols-1 md:grid-cols-12 gap-5 h-full overflow-hidden">
+        <!-- Left: Providers List with Live Search (5 cols) -->
+        <div class="md:col-span-5 bg-[#0F172A] border border-[#1E293B] rounded-2xl p-3 flex flex-col gap-3 shadow-lg h-full overflow-hidden">
+          <div class="relative w-full shrink-0">
+            <span class="material-symbols-outlined absolute left-3 top-2.5 text-[#64748B] text-sm">search</span>
+            <input 
+              v-model="providerSearch" 
+              placeholder="🔍 搜索模型平台 (Search Provider)..." 
+              class="w-full bg-[#1E293B] border border-[#334155] rounded-xl pl-9 pr-3 py-2 text-xs text-[#F1F5F9] outline-none focus:border-[#06B6D4]"
+            />
+          </div>
 
-        <button 
-          @click="activeTab = 'default_model'"
-          :class="[
-            'flex items-center gap-2.5 p-3 rounded-xl transition-all cursor-pointer text-xs w-full text-left font-bold',
-            activeTab === 'default_model' ? 'bg-[#06B6D4]/15 text-[#06B6D4] border-l-4 border-[#06B6D4]' : 'text-[#94A3B8] hover:bg-[#1E293B] hover:text-[#F1F5F9]'
-          ]"
-        >
-          <span class="material-symbols-outlined text-base">tune</span>
-          <span>{{ i18n.currentLang === 'zh-CN' ? '默认活动模型' : 'Default Model' }}</span>
-        </button>
+          <div class="flex-1 overflow-y-auto space-y-1.5 pr-1">
+            <button
+              v-for="p in filteredProviders"
+              :key="p.id"
+              @click="selectProvider(p.id)"
+              :class="[
+                'flex items-center justify-between p-3 rounded-xl transition-all cursor-pointer text-xs w-full text-left border',
+                selectedProviderId === p.id
+                  ? 'bg-[#06B6D4]/15 border-[#06B6D4] text-[#F1F5F9] font-bold shadow-md'
+                  : 'bg-[#1E293B]/40 border-transparent hover:bg-[#1E293B] text-[#94A3B8]'
+              ]"
+            >
+              <div class="flex items-center gap-2.5 truncate">
+                <span class="material-symbols-outlined text-sm text-[#06B6D4] shrink-0">{{ p.icon }}</span>
+                <span class="truncate font-medium">{{ p.name }}</span>
+              </div>
 
-        <button 
-          @click="activeTab = 'general'"
-          :class="[
-            'flex items-center gap-2.5 p-3 rounded-xl transition-all cursor-pointer text-xs w-full text-left font-bold',
-            activeTab === 'general' ? 'bg-[#06B6D4]/15 text-[#06B6D4] border-l-4 border-[#06B6D4]' : 'text-[#94A3B8] hover:bg-[#1E293B] hover:text-[#F1F5F9]'
-          ]"
-        >
-          <span class="material-symbols-outlined text-base">settings</span>
-          <span>{{ i18n.currentLang === 'zh-CN' ? '常规偏好设置' : 'General' }}</span>
-        </button>
-
-        <button 
-          @click="activeTab = 'notifications'"
-          :class="[
-            'flex items-center gap-2.5 p-3 rounded-xl transition-all cursor-pointer text-xs w-full text-left font-bold',
-            activeTab === 'notifications' ? 'bg-[#06B6D4]/15 text-[#06B6D4] border-l-4 border-[#06B6D4]' : 'text-[#94A3B8] hover:bg-[#1E293B] hover:text-[#F1F5F9]'
-          ]"
-        >
-          <span class="material-symbols-outlined text-base">notifications</span>
-          <span>{{ i18n.currentLang === 'zh-CN' ? '告警通知 (Webhook)' : 'Notifications' }}</span>
-        </button>
-
-        <button 
-          @click="activeTab = 'about'"
-          :class="[
-            'flex items-center gap-2.5 p-3 rounded-xl transition-all cursor-pointer text-xs w-full text-left font-bold mt-auto',
-            activeTab === 'about' ? 'bg-[#06B6D4]/15 text-[#06B6D4] border-l-4 border-[#06B6D4]' : 'text-[#94A3B8] hover:bg-[#1E293B] hover:text-[#F1F5F9]'
-          ]"
-        >
-          <span class="material-symbols-outlined text-base">info</span>
-          <span>{{ i18n.currentLang === 'zh-CN' ? '关于 AI Ops Hub' : 'About' }}</span>
-        </button>
-      </div>
-
-      <!-- Column 2: Providers List with Live Search (4 cols) -->
-      <div v-if="activeTab === 'llm'" class="md:col-span-4 bg-[#0F172A] border border-[#1E293B] rounded-2xl p-3 flex flex-col gap-3 shadow-lg h-full overflow-hidden">
-        <div class="relative w-full shrink-0">
-          <span class="material-symbols-outlined absolute left-3 top-2.5 text-[#64748B] text-sm">search</span>
-          <input 
-            v-model="providerSearch" 
-            placeholder="🔍 搜索模型平台 (Search Provider)..." 
-            class="w-full bg-[#1E293B] border border-[#334155] rounded-xl pl-9 pr-3 py-2 text-xs text-[#F1F5F9] outline-none focus:border-[#06B6D4]"
-          />
+              <div class="flex items-center gap-1.5 shrink-0">
+                <span v-if="p.latency" class="text-[10px] font-mono text-[#10B981]">{{ p.latency }}ms</span>
+                <span 
+                  :class="[
+                    'px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider',
+                    p.status === 'connected' ? 'bg-[#10B981]/20 text-[#10B981] border border-[#10B981]/40' : 'bg-[#334155]/60 text-[#64748B]'
+                  ]"
+                >
+                  {{ p.status === 'connected' ? 'ON 🟢' : 'OFF ⚪' }}
+                </span>
+              </div>
+            </button>
+          </div>
         </div>
 
-        <div class="flex-1 overflow-y-auto space-y-1.5 pr-1">
-          <button
-            v-for="p in filteredProviders"
-            :key="p.id"
-            @click="selectProvider(p.id)"
-            :class="[
-              'flex items-center justify-between p-3 rounded-xl transition-all cursor-pointer text-xs w-full text-left border',
-              selectedProviderId === p.id
-                ? 'bg-[#06B6D4]/15 border-[#06B6D4] text-[#F1F5F9] font-bold shadow-md'
-                : 'bg-[#1E293B]/40 border-transparent hover:bg-[#1E293B] text-[#94A3B8]'
-            ]"
-          >
-            <div class="flex items-center gap-2.5 truncate">
-              <span class="material-symbols-outlined text-sm text-[#06B6D4] shrink-0">{{ p.icon }}</span>
-              <span class="truncate font-medium">{{ p.name }}</span>
-            </div>
-
-            <div class="flex items-center gap-1.5 shrink-0">
-              <span v-if="p.latency" class="text-[10px] font-mono text-[#10B981]">{{ p.latency }}ms</span>
-              <span 
-                :class="[
-                  'px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider',
-                  p.status === 'connected' ? 'bg-[#10B981]/20 text-[#10B981] border border-[#10B981]/40' : 'bg-[#334155]/60 text-[#64748B]'
-                ]"
-              >
-                {{ p.status === 'connected' ? 'ON 🟢' : 'OFF ⚪' }}
+        <!-- Right: Detail Config Panel & Model Tree (7 cols) -->
+        <div class="md:col-span-7 bg-[#0F172A] border border-[#1E293B] rounded-2xl p-5 flex flex-col justify-between shadow-lg h-full overflow-y-auto">
+          <div class="flex flex-col gap-4">
+            <div class="flex items-center justify-between border-b border-[#1E293B] pb-3">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-[#06B6D4] text-xl">{{ currentProvider.icon }}</span>
+                <h3 class="text-sm font-bold text-[#F1F5F9]">{{ currentProvider.name }}</h3>
+              </div>
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-[#1E293B] text-[#06B6D4] border border-[#334155]">
+                Cherry Studio Standard
               </span>
             </div>
+
+            <div class="flex flex-col gap-1.5 text-xs">
+              <div class="flex items-center justify-between">
+                <label class="text-[#94A3B8] font-bold">API 密钥 (API Key / Access Token)</label>
+                <button @click="showPassword = !showPassword" class="text-[#06B6D4] hover:underline cursor-pointer text-[11px] font-bold">
+                  {{ showPassword ? '隐藏' : '显示' }}
+                </button>
+              </div>
+              <div class="flex items-center gap-2">
+                <input 
+                  v-model="editApiKey" 
+                  :type="showPassword ? 'text' : 'password'" 
+                  placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxx" 
+                  class="flex-1 bg-[#1E293B] border border-[#334155] rounded-xl p-2.5 text-[#F1F5F9] font-mono outline-none focus:border-[#06B6D4]" 
+                />
+                <button 
+                  @click="testLLMConnection"
+                  :disabled="isTestingLLM"
+                  class="px-3 py-2.5 rounded-xl bg-[#1E293B] border border-[#334155] text-[#06B6D4] text-xs font-bold hover:border-[#06B6D4] transition-all flex items-center gap-1 cursor-pointer disabled:opacity-50 shrink-0"
+                >
+                  <span :class="['material-symbols-outlined text-sm', isTestingLLM ? 'animate-spin' : '']">sensors</span>
+                  <span>{{ isTestingLLM ? '检测中...' : '检测' }}</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-1.5 text-xs">
+              <div class="flex items-center justify-between">
+                <label class="text-[#94A3B8] font-bold">接口端点地址 (Base URL)</label>
+                <button @click="resetBaseUrl" class="text-[#64748B] hover:text-[#06B6D4] text-[11px] font-bold">
+                  重置默认
+                </button>
+              </div>
+              <input 
+                v-model="editBaseUrl" 
+                type="text" 
+                class="w-full bg-[#1E293B] border border-[#334155] rounded-xl p-2.5 text-[#F1F5F9] font-mono outline-none focus:border-[#06B6D4]" 
+              />
+            </div>
+
+            <div class="flex flex-col gap-1.5 text-xs pt-2 border-t border-[#1E293B]">
+              <label class="text-[#94A3B8] font-bold">活跃模型选择 (Active Model)</label>
+
+              <div v-if="currentProvider.status !== 'connected'" class="bg-[#F59E0B]/10 border border-[#F59E0B]/30 rounded-xl p-3 text-[11px] text-[#F59E0B] font-medium flex items-center gap-2">
+                <span class="material-symbols-outlined text-sm">lock</span>
+                <span>⚠️ 请先填写 API 密钥并点击右上角 [检测] 探针通过后解锁模型树</span>
+              </div>
+
+              <div v-else class="relative w-full">
+                <select 
+                  v-model="editSelectedModel" 
+                  class="w-full appearance-none bg-[#1E293B] border border-[#06B6D4] rounded-xl pl-3 pr-10 py-2.5 text-[#F1F5F9] font-mono font-bold outline-none focus:ring-2 focus:ring-[#06B6D4]/30 cursor-pointer"
+                >
+                  <option 
+                    v-for="model in currentProvider.availableModels" 
+                    :key="model" 
+                    :value="model"
+                  >
+                    {{ model }}
+                  </option>
+                </select>
+                <span class="material-symbols-outlined absolute right-3 top-3 text-[#06B6D4] pointer-events-none text-sm">
+                  expand_more
+                </span>
+              </div>
+            </div>
+
+            <div v-if="testMessage" class="text-xs p-3 rounded-xl bg-[#1E293B] border border-[#334155] text-[#10B981] font-mono leading-relaxed">
+              {{ testMessage }}
+            </div>
+          </div>
+
+          <button 
+            @click="saveLLMConfig" 
+            class="w-full py-3 bg-[#06B6D4] text-[#0B1120] rounded-xl font-bold text-xs hover:opacity-90 transition-all cursor-pointer shadow-lg shadow-[#06B6D4]/20 mt-4 flex items-center justify-center gap-2"
+          >
+            <span>保存并设为系统全局默认活动模型</span>
+            <span>&rarr;</span>
           </button>
         </div>
       </div>
 
-      <!-- Column 3: Detail Config Panel & Model Tree (5 cols) -->
-      <div v-if="activeTab === 'llm'" class="md:col-span-5 bg-[#0F172A] border border-[#1E293B] rounded-2xl p-5 flex flex-col justify-between shadow-lg h-full overflow-y-auto">
-        <div class="flex flex-col gap-4">
-          <div class="flex items-center justify-between border-b border-[#1E293B] pb-3">
-            <div class="flex items-center gap-2">
-              <span class="material-symbols-outlined text-[#06B6D4] text-xl">{{ currentProvider.icon }}</span>
-              <h3 class="text-sm font-bold text-[#F1F5F9]">{{ currentProvider.name }}</h3>
-            </div>
-            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-[#1E293B] text-[#06B6D4] border border-[#334155]">
-              Cherry Studio Standard
-            </span>
-          </div>
-
-          <div class="flex flex-col gap-1.5 text-xs">
-            <div class="flex items-center justify-between">
-              <label class="text-[#94A3B8] font-bold">API 密钥 (API Key / Access Token)</label>
-              <button @click="showPassword = !showPassword" class="text-[#06B6D4] hover:underline cursor-pointer text-[11px] font-bold">
-                {{ showPassword ? '隐藏' : '显示' }}
-              </button>
-            </div>
-            <div class="flex items-center gap-2">
-              <input 
-                v-model="editApiKey" 
-                :type="showPassword ? 'text' : 'password'" 
-                placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxx" 
-                class="flex-1 bg-[#1E293B] border border-[#334155] rounded-xl p-2.5 text-[#F1F5F9] font-mono outline-none focus:border-[#06B6D4]" 
-              />
-              <button 
-                @click="testLLMConnection"
-                :disabled="isTestingLLM"
-                class="px-3 py-2.5 rounded-xl bg-[#1E293B] border border-[#334155] text-[#06B6D4] text-xs font-bold hover:border-[#06B6D4] transition-all flex items-center gap-1 cursor-pointer disabled:opacity-50 shrink-0"
-              >
-                <span :class="['material-symbols-outlined text-sm', isTestingLLM ? 'animate-spin' : '']">sensors</span>
-                <span>{{ isTestingLLM ? '检测中...' : '检测' }}</span>
-              </button>
-            </div>
-          </div>
-
-          <div class="flex flex-col gap-1.5 text-xs">
-            <div class="flex items-center justify-between">
-              <label class="text-[#94A3B8] font-bold">接口端点地址 (Base URL)</label>
-              <button @click="resetBaseUrl" class="text-[#64748B] hover:text-[#06B6D4] text-[11px] font-bold">
-                重置默认
-              </button>
-            </div>
-            <input 
-              v-model="editBaseUrl" 
-              type="text" 
-              class="w-full bg-[#1E293B] border border-[#334155] rounded-xl p-2.5 text-[#F1F5F9] font-mono outline-none focus:border-[#06B6D4]" 
-            />
-          </div>
-
-          <div class="flex flex-col gap-1.5 text-xs pt-2 border-t border-[#1E293B]">
-            <label class="text-[#94A3B8] font-bold">活跃模型选择 (Active Model)</label>
-
-            <div v-if="currentProvider.status !== 'connected'" class="bg-[#F59E0B]/10 border border-[#F59E0B]/30 rounded-xl p-3 text-[11px] text-[#F59E0B] font-medium flex items-center gap-2">
-              <span class="material-symbols-outlined text-sm">lock</span>
-              <span>⚠️ 请先填写 API 密钥并点击右上角 [检测] 探针通过后解锁模型树</span>
-            </div>
-
-            <div v-else class="relative w-full">
-              <select 
-                v-model="editSelectedModel" 
-                class="w-full appearance-none bg-[#1E293B] border border-[#06B6D4] rounded-xl pl-3 pr-10 py-2.5 text-[#F1F5F9] font-mono font-bold outline-none focus:ring-2 focus:ring-[#06B6D4]/30 cursor-pointer"
-              >
-                <option 
-                  v-for="model in currentProvider.availableModels" 
-                  :key="model" 
-                  :value="model"
-                >
-                  {{ model }}
-                </option>
-              </select>
-              <span class="material-symbols-outlined absolute right-3 top-3 text-[#06B6D4] pointer-events-none text-sm">
-                expand_more
-              </span>
-            </div>
-          </div>
-
-          <div v-if="testMessage" class="text-xs p-3 rounded-xl bg-[#1E293B] border border-[#334155] text-[#10B981] font-mono leading-relaxed">
-            {{ testMessage }}
-          </div>
-        </div>
-
-        <button 
-          @click="saveLLMConfig" 
-          class="w-full py-3 bg-[#06B6D4] text-[#0B1120] rounded-xl font-bold text-xs hover:opacity-90 transition-all cursor-pointer shadow-lg shadow-[#06B6D4]/20 mt-4 flex items-center justify-center gap-2"
-        >
-          <span>保存并设为系统全局默认活动模型</span>
-          <span>&rarr;</span>
-        </button>
-      </div>
-
-      <!-- General Settings Tab -->
-      <div v-if="activeTab === 'general'" class="md:col-span-9 bg-[#0F172A] border border-[#1E293B] rounded-2xl p-6 flex flex-col justify-between shadow-lg h-full overflow-y-auto">
-        <div class="flex flex-col gap-5 text-xs">
+      <!-- Tab 2: General Settings Full Width -->
+      <div v-if="activeTab === 'general'" class="bg-[#0F172A] border border-[#1E293B] rounded-2xl p-6 flex flex-col justify-between shadow-lg h-full overflow-y-auto">
+        <div class="flex flex-col gap-5 text-xs max-w-2xl">
           <h3 class="text-base font-bold text-[#F1F5F9] border-l-4 border-[#06B6D4] pl-3">
             系统常规偏好与监控告警阈值
           </h3>
@@ -362,14 +360,14 @@ selectProvider('zhipu')
           </div>
         </div>
 
-        <button @click="saveGeneralSettings" class="w-full py-3 bg-[#06B6D4] text-[#0B1120] font-bold text-xs rounded-xl mt-6">
+        <button @click="saveGeneralSettings" class="w-full py-3 bg-[#06B6D4] text-[#0B1120] font-bold text-xs rounded-xl mt-6 max-w-2xl">
           保存常规偏好设置
         </button>
       </div>
 
-      <!-- Webhook Notifications Tab -->
-      <div v-if="activeTab === 'notifications'" class="md:col-span-9 bg-[#0F172A] border border-[#1E293B] rounded-2xl p-6 flex flex-col justify-between shadow-lg h-full overflow-y-auto">
-        <div class="flex flex-col gap-5 text-xs">
+      <!-- Tab 3: Webhook Notifications Full Width -->
+      <div v-if="activeTab === 'notifications'" class="bg-[#0F172A] border border-[#1E293B] rounded-2xl p-6 flex flex-col justify-between shadow-lg h-full overflow-y-auto">
+        <div class="flex flex-col gap-5 text-xs max-w-2xl">
           <h3 class="text-base font-bold text-[#F1F5F9] border-l-4 border-[#06B6D4] pl-3">
             告警 Webhook 机器人接入 (Notifications)
           </h3>
@@ -390,7 +388,7 @@ selectProvider('zhipu')
           </div>
         </div>
 
-        <div class="flex items-center gap-3 mt-6">
+        <div class="flex items-center gap-3 mt-6 max-w-2xl">
           <button @click="sendTestWebhook" class="flex-1 py-3 bg-[#1E293B] border border-[#334155] text-[#06B6D4] font-bold text-xs rounded-xl hover:border-[#06B6D4]">
             🧪 发送测试告警消息
           </button>
@@ -400,9 +398,9 @@ selectProvider('zhipu')
         </div>
       </div>
 
-      <!-- Pure Industrial Product Copy (No Personal Bio Mentions) -->
-      <div v-if="activeTab === 'about' || activeTab === 'default_model'" class="md:col-span-9 bg-[#0F172A] border border-[#1E293B] rounded-2xl p-6 flex flex-col justify-between shadow-lg h-full overflow-y-auto text-xs leading-relaxed">
-        <div class="flex flex-col gap-4">
+      <!-- Tab 4: About Product Card -->
+      <div v-if="activeTab === 'about'" class="bg-[#0F172A] border border-[#1E293B] rounded-2xl p-6 flex flex-col justify-between shadow-lg h-full overflow-y-auto text-xs leading-relaxed">
+        <div class="flex flex-col gap-4 max-w-3xl">
           <h3 class="text-lg font-bold text-[#06B6D4] flex items-center gap-2">
             <span class="material-symbols-outlined">smart_toy</span> AI Ops Hub (v1.0.0)
           </h3>
@@ -416,11 +414,11 @@ selectProvider('zhipu')
             </div>
             <div>
               <span class="text-[#06B6D4] font-bold block mb-1">LLM Integration</span>
-              <span class="text-[#94A3B8]">DeepSeek, Qwen, Zhipu, OpenAI, Claude</span>
+              <span class="text-[#94A3B8]">DeepSeek, Qwen, Zhipu, xAI Grok, OpenAI</span>
             </div>
           </div>
         </div>
-        <div class="pt-4 border-t border-[#1E293B] text-[#64748B] font-mono flex justify-between">
+        <div class="pt-4 border-t border-[#1E293B] text-[#64748B] font-mono flex justify-between max-w-3xl">
           <span>License: MIT Open Source</span>
           <span>Version: v1.0.0 Standard</span>
         </div>
