@@ -36,11 +36,12 @@
 - [x] **Web SSH Terminal 命令行**: 实现打字输入 `top`, `status`, `ping`, `uname`, `help`, `clear` 并在屏幕追加彩色命令日志。
 - [x] **Dashboard 动态 Modal**: 实现 `Add Server` 模态弹窗与 `AIOpsDB` 数据库动态增删查改。
 
-### 9. 5 大核心 View 模块 Vue 3 全真机工程化完结 (2026-08-06 00:29)
-- [x] **AIChat 运维诊断模块 (`AIChat.vue`)**: 接入真实 `/api/chat` 后端 API，支持动态上下文选择器（`@node-us-east-01`）与快捷指令输入。
-- [x] **Web SSH Terminal 命令行 (`Terminal.vue`)**: 支持多 Session 标签页切换、活动 Session 识别与命令行真实响应输出（`top`, `status`, `ping`, `clear`）。
-- [x] **系统设置中心 (`Settings.vue`)**: 增加常规 API Key 管理、Webhook 告警配置、关于页面与保存 Toast 响应。
-- [x] **规范化 Git Push & 零报错构建**: 本地 `npx vite build` 0 报错通过，GitHub commit `d3daf0f` 强推成功，GCP 服务器全线更新完毕。
+### 10. 首次登录超管向导 (Super Admin Setup) & Tailwind 引擎挂载完结 (2026-08-06 00:33)
+- [x] **研发首次登录初始化向导 (`Login.vue`)**: 支持自动判断系统初始化状态，首次访问呈现“⚡ 首次运行：请设置超级管理员账号与密码”向导，初始化完成后切换为标准登录。
+- [x] **后端 SQLite `users` 表与 Auth 接口**: 在 `backend/src/index.js` 中增加 `users` 表、`/api/auth/status`、`/api/auth/setup` 与 `/api/auth/login` 接口。
+- [x] **路由守卫 (Auth Navigation Guard)**: 在 `router/index.ts` 中挂载全局路由拦截，未登录用户访问任何页面自动引导至 `/login`。
+- [x] **挂载 Tailwind 全量布局引擎 (`index.html`)**: 引入 Tailwind CSS 全量编译驱动包，彻底解决 `flex`、`grid`、`rounded-xl` 等布局渲染问题。
+- [x] **实测与部署**: 线上 `http://34.136.76.211:3000/api/auth/status` 准确返回 `{"initialized":false}`，完成云服务器与 GitHub (`b09f4dc`) 全线发布。
 
 ---
 
