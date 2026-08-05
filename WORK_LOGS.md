@@ -36,12 +36,12 @@
 - [x] **Web SSH Terminal 命令行**: 实现打字输入 `top`, `status`, `ping`, `uname`, `help`, `clear` 并在屏幕追加彩色命令日志。
 - [x] **Dashboard 动态 Modal**: 实现 `Add Server` 模态弹窗与 `AIOpsDB` 数据库动态增删查改。
 
-### 12. 0 节点在线率数理修正 & Cherry Studio 大模型中心 & DevOps SRE 技能库全线上线 (2026-08-06 00:44)
-- [x] **0 节点在线率数理严谨修正 (`Dashboard.vue`)**: 彻底消除了服务器总数为 0 时在线率显示 100% 的逻辑 Bug，当 `total === 0` 时严谨输出 `0.0%`。
-- [x] **专业 SSH 凭据添加弹窗 (`Dashboard.vue`)**: 支持配置 `Hostname`、`IP`、`SSH 端口 (默认 22)`、`用户名 (root/ubuntu)`、`鉴权类型 (密码 Password vs SSH 私钥 Private Key)`，并集成 `[🔗 测试 SSH 连通性]` 探针。
-- [x] **Cherry Studio 风格大模型配置中心 (`Settings.vue` & `useLLMStore.ts`)**: 适配通义千问 Qwen、DeepSeek、智谱 GLM、月之暗面 Kimi、豆包、OpenAI、Claude、Gemini、Ollama，支持 API Key 测试探针、模型下拉选择与系统默认连通性常驻指示灯。
-- [x] **内置 DevOps SRE 运维 Skill 提示词库 (`AIChat.vue`)**: 为 AI 诊断助手注入专业 SysAdmin 系统运维提示词，并提供 CPU/内存泄漏排查、Docker 崩盘诊断、SSL 自动续期脚本一键加载预设。
-- [x] **证书防护与 Web SSH 终端弹窗 (`Certificates.vue` & `Terminal.vue`)**: 增加 `[+ 添加证书/密钥防护]` 与 `[+ 新建 Web SSH 连线]` 弹窗，支持开多 SSH 会话标签。
+### 13. TopNav 双语国际化全接入完结 (2026-08-06 00:46)
+- [x] **TopNav 双语字典扩展 (`locales.ts`)**: 在 `locales.ts` 中增加 `topnav.nodes`、`topnav.clusters` 与 `topnav.security` 字典映射。
+- [x] **中文/英文状态完美响应 (`TopNav.vue`)**:
+  - 中文状态：`服务器节点` | `集群管理` | `安全防护`
+  - 英文状态：`Nodes` | `Clusters` | `Security`
+- [x] **云服务器与 GitHub (`f880afb`) 同步更新**: 线上 `34.136.76.211:3000` 已实时更新。
 
 ---
 
