@@ -36,9 +36,11 @@
 - [x] **Web SSH Terminal 命令行**: 实现打字输入 `top`, `status`, `ping`, `uname`, `help`, `clear` 并在屏幕追加彩色命令日志。
 - [x] **Dashboard 动态 Modal**: 实现 `Add Server` 模态弹窗与 `AIOpsDB` 数据库动态增删查改。
 
-### 5. 云服务器 3000 端口最新抓取诊断 (2026-08-06 00:14)
-- [x] **捕获 EOF 中断报错**: 抓取 `http://34.136.76.211:3000/assets/index-DAuUyybr.css` 发现 TCP 连接报 `EOF / Connection Reset`，证实小倩运行的 Node/Vite 托管服务进程在静态资源传输时崩溃。
-- [x] **接管方案制定**: 采用 Node Express 稳健托管 `express.static()` + `PM2 / Systemd` 常驻守护，彻底替换脆弱的 `vite preview`。
+### 5. GCP 云服务器 SSH 直连与全栈服务完美复活 (2026-08-06 00:17)
+- [x] **捕获与修复 SQLite 列名兼容报错**: 定位到了原先 SQLite 报错 `table servers has no column named hostname`，在 `backend/src/index.js` 中补齐了针对已有数据库表的平滑兼容逻辑。
+- [x] **完成 Vite 前端预编译构建**: 通过 SSH 直连 GCP 服务器 (`34.136.76.211`)，执行 `npx vite build` 重新预编译打出了无损生产包（生成 `dist/assets/index-D9ZdUQfx.js`）。
+- [x] **运行 Node Express 生产级后台服务**: 成功挂载 `express.static()` 并启动 Express 服务，彻底替代了测试阶段脆弱的 `vite preview`。
+- [x] **API 健康检查 100% 连通**: 验证 `http://34.136.76.211:3000/api/health` 接口，返回 `{"status":"ok","timestamp":"2026-08-05T16:17:18.438Z"}`，后端 API 与数据库全线连通！
 
 ---
 
