@@ -36,9 +36,12 @@
 - [x] **Web SSH Terminal 命令行**: 实现打字输入 `top`, `status`, `ping`, `uname`, `help`, `clear` 并在屏幕追加彩色命令日志。
 - [x] **Dashboard 动态 Modal**: 实现 `Add Server` 模态弹窗与 `AIOpsDB` 数据库动态增删查改。
 
-### 14. TopNav 顶部重复项目标题删除完结 (2026-08-06 00:47)
-- [x] **删除 TopNav 重复标题 (`TopNav.vue`)**: 移除了右侧顶栏中与左侧 Sidebar 侧边栏重复显示的 `AI Ops 智能运维枢纽` 项目标题，页面更加利落简洁。
-- [x] **云服务器与 GitHub (`7bf16aa`) 同步更新**: 线上 `34.136.76.211:3000` 已实时生效。
+### 15. 生效集群管理 `Clusters.vue` & 证书智能解析 + 开源 README.md 全量上线 (2026-08-06 00:51)
+- [x] **隐私与安全防泄漏扫描**: 扩展 `backend/.gitignore`，严格将 SQLite 数据库 `ai-ops.db`、日志文件 `app.log` 和 `.env` 隔离在 Git 仓库外，全代码库无 Key 泄露。
+- [x] **纯净无歧义导航更名 (`TopNav.vue` & `locales.ts`)**: 统一将“安全防护/安全与证书”直接更名为“证书管理” (Certificates)，导航呈现为：`服务器节点` | `集群管理` | `证书管理`。
+- [x] **研发集群管理模块 (`Clusters.vue` & `/clusters`)**: 建立多云集群自动分组与负载看板（AWS、GCP、腾讯云、阿里云、Azure/私有云），支持节点归类统计与 `[+ 创建自定义集群]`。
+- [x] **证书智能自动解析与 30 天到期提醒 (`Certificates.vue`)**: 输入域名或粘贴证书时，自动探测解析类型（SSL / SSH Key / Domain），自动推算到期日，并集成“到期前 30 天自动化告警提醒”开关。
+- [x] **重构 GitHub 官方开源 `README.md`**: 完整撰写包含创始人背景 (Moisse Li)、4 大核心痛点、技术架构、功能矩阵、v1.0.0 版本号与一键部署指南的规范 README.md。
 
 ---
 
