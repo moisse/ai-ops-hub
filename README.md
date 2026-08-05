@@ -10,6 +10,24 @@
 
 ---
 
+## 💡 Why This Project
+
+I'm not a DevOps engineer. I'm a developer who ended up managing a handful of servers across different cloud providers — and it quickly became overwhelming.
+
+Every time I needed to check if a server was healthy, I had to SSH in, run a few commands, and remember which IP belonged to which service. When an SSL certificate expired unexpectedly, I'd scramble to figure out where it was and how to renew it. And God forbid I needed to troubleshoot something at 2 AM — by then I'd already forgotten half my SSH keys.
+
+I looked at existing tools, but they all assumed I was a sysadmin who lived in the terminal. I just wanted something simple: **one place to see everything, and a way to ask questions instead of memorizing commands.**
+
+So I built AI Ops Hub — not because the world needed another monitoring tool, but because I needed something that worked the way *I* think. If I can type *"why is server-03 slow?"* and get a real answer, that's a win.
+
+**What makes this different:**
+-  **One interface** — Dashboard, SSH, AI chat, certificates, alerts — no more tab switching
+-  **AI-first** — Ask questions in plain language, get real answers with actionable suggestions
+-  **Self-hosted** — Your servers, your data, your control
+-  **Cloud-agnostic** — GCP, AWS, Azure, on-premise — they're all just "servers" here
+
+This is a personal project built by a vibe coding beginner. If you're in the same boat — managing servers without a DevOps background — maybe this will help. And if you're a seasoned ops person, I'd love your feedback on what I'm missing.
+
 ##  Screenshots
 
 ### Dashboard — Real-time Server Overview
