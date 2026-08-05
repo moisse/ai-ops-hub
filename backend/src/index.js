@@ -87,6 +87,7 @@ function initSqliteTables() {
 
     db.run(`CREATE TABLE IF NOT EXISTS servers (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT,
       hostname TEXT NOT NULL,
       ip TEXT NOT NULL,
       port INTEGER DEFAULT 22,
@@ -101,6 +102,7 @@ function initSqliteTables() {
     )`);
 
     // Dynamic schema migrations for existing SQLite tables
+    db.run("ALTER TABLE servers ADD COLUMN name TEXT", () => {});
     db.run("ALTER TABLE servers ADD COLUMN hostname TEXT", () => {});
     db.run("ALTER TABLE servers ADD COLUMN port INTEGER DEFAULT 22", () => {});
     db.run("ALTER TABLE servers ADD COLUMN username TEXT DEFAULT 'root'", () => {});
@@ -202,8 +204,8 @@ app.post('/api/servers', (req, res) => {
   
   if (db) {
     db.run(
-      'INSERT INTO servers (hostname, ip, port, username, authType, region, status, cpu, memory) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-      [finalHost, finalIp, port, username, authType, region, 'online', cpu, memory],
+      'INSERT INTO servers (name, hostname, ip, port, username, authType, region, status, cpu, memory) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [finalHost, finalHost, finalIp, port, username, authType, region, 'online', cpu, memory],
       function(err) {
         if (err) {
           logEvent('error', 'Add server error to SQLite', { error: err.message });
