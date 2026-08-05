@@ -1,31 +1,38 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
+const emit = defineEmits(['navigate'])
+
 const navItems = [
-  { icon: 'dashboard', label: 'Dashboard', active: true },
-  { icon: 'chat', label: 'AI Chat', active: false },
-  { icon: 'terminal', label: 'Terminal', active: false },
-  { icon: 'verified_user', label: 'Certificates', active: false },
-  { icon: 'assignment', label: 'Tasks', active: false },
-  { icon: 'settings', label: 'Settings', active: false },
+  { icon: 'dashboard', label: 'Dashboard', page: 'dashboard', active: true },
+  { icon: 'chat', label: 'AI Chat', page: 'chat', active: false },
+  { icon: 'terminal', label: 'Terminal', page: 'terminal', active: false },
+  { icon: 'verified_user', label: 'Certificates', page: 'certificates', active: false },
+  { icon: 'assignment', label: 'Tasks', page: 'tasks', active: false },
+  { icon: 'settings', label: 'Settings', page: 'settings', active: false },
 ]
+
+function navigateTo(page: string) {
+  emit('navigate', page)
+}
 </script>
 
 <template>
   <aside class="hidden md:flex flex-col h-screen w-[240px] overflow-y-auto fixed left-0 top-0 bg-[#0F172A] border-r border-[#1E293B] z-50">
     <!-- Logo -->
     <div class="px-4 py-6 flex flex-col gap-2">
-      <h1 class="text-[20px] font-bold text-[#06B6D4]"> AI Ops Hub</h1>
+      <h1 class="text-[20px] font-bold text-[#06B6D4]">⚡ AI Ops Hub</h1>
       <p class="text-[13px] text-[#64748B]">Mission Control</p>
     </div>
 
     <!-- Navigation -->
     <nav class="flex-1 px-2 py-2 flex flex-col gap-1">
-      <a
+      <button
         v-for="item in navItems"
         :key="item.label"
+        @click="navigateTo(item.page)"
         :class="[
-          'flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all cursor-pointer',
+          'flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all cursor-pointer w-full text-left',
           item.active
             ? 'bg-[rgba(6,182,212,0.1)] text-[#06B6D4] border-l-[3px] border-[#06B6D4]'
             : 'text-[#94A3B8] hover:bg-[rgba(255,255,255,0.03)] hover:text-[#F1F5F9]'
@@ -33,7 +40,7 @@ const navItems = [
       >
         <span class="material-symbols-outlined text-[20px]">{{ item.icon }}</span>
         <span class="text-[14px] font-medium">{{ item.label }}</span>
-      </a>
+      </button>
     </nav>
 
     <!-- Bottom Status -->
@@ -42,10 +49,10 @@ const navItems = [
         <span class="text-[11px] font-bold text-[#10B981] uppercase tracking-wide">Server Health: Optimal</span>
         <div class="w-2 h-2 rounded-full bg-[#10B981] status-dot-online"></div>
       </div>
-      <a class="flex items-center gap-3 px-4 py-2.5 text-[#94A3B8] hover:bg-[rgba(255,255,255,0.03)] hover:text-[#F1F5F9] transition-all cursor-pointer rounded-lg">
+      <button class="flex items-center gap-3 px-4 py-2.5 text-[#94A3B8] hover:bg-[rgba(255,255,255,0.03)] hover:text-[#F1F5F9] transition-all cursor-pointer rounded-lg w-full text-left">
         <span class="material-symbols-outlined text-[20px]">analytics</span>
         <span class="text-[14px]">System Status</span>
-      </a>
+      </button>
     </div>
   </aside>
 </template>
