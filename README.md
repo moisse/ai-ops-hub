@@ -10,88 +10,37 @@
 
 ---
 
-## 📸 Screenshots
+##  Screenshots
 
 ### Dashboard — Real-time Server Overview
 
-```
-┌─────────────────────────────────────────────────────────────────
-│  ⚡ AI Ops Hub                                    [🔔] [] [👤] │
-├──────────┬──────────────────────────────────────────────────────┤
-│          │  ️  2 certificates expiring soon, 1 server offline  │
-│  📊 Dash │                                                      │
-│  💬 Chat │  ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────────┐  │
-│  🖥️ Term │  │  8   │ │  6 • │ │  1 • │ │  1 • │ │  99.2%   │  │
-│  🔑 Cert │  │Total │ │Online│ │Warn  │ │Off   │ │ Uptime   │  │
-│  ⚙️ Set  │  └──────┘ └────── └──────┘ └────── └──────────┘  │
-│          │                                                      │
-│          │  Proxy Nodes                                         │
-│          │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐   │
-│          │  │ 🟢 GCP-West │ │  AWS-EU   │ │ 🟡 Azure-HK │   │
-│          │  │ CPU  12%    │ │ CPU  28%    │ │ CPU  89%    │   │
-│          │  │ MEM  45%    │ │ MEM  62%    │ │ MEM  95%  │   │
-│          │  │ [Details]   │ │ [Details]   │ │ [Details]   │   │
-│          │  │ [SSH]       │ │ [SSH]       │ │ [SSH]       │   │
-│          │  └─────────────┘ ─────────────┘ └─────────────   │
-│          │                                                      │
-│          │  AI Infrastructure                                   │
-│          │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐   │
-│          │  │ GPU Cluster │ │ Inference   │ │ Training Rig│   │
-│          │  │ 98% UTIL    │ │ OFFLINE 🔴  │ │ Epoch 45/100│   │
-│          │  │ [AI OPS]    │ │ [RESTART]   │ │ [VIEW LOGS] │   │
-│          │  ─────────────┘ └───────────── └─────────────┘   │
-──────────┴──────────────────────────────────────────────────────┘
-```
+![Dashboard](docs/screenshots/dashboard.png)
+
+Real-time CPU, memory, disk metrics across all servers with color-coded status indicators.
 
 ### AI Chat — Natural Language Operations
 
-```
-┌─────────────────────────────────────────────────────────────────
-│   AI Chat                                      [All Servers ▾] │
-├──────────┬──────────────────────────────────────────────────────┤
-│          │                                                      │
-│  [+ New  │  🤖 AI: Hello! I'm your AI operations assistant.    │
-│   Chat]  │     How can I help you today?                        │
-│          │                                                      │
-│  Current │  👤 You: Check memory on server-02                   │
-│  Session │                                                      │
-│          │   AI: Server-02 memory usage:                      │
-│          │  ┌────────────────────────────────────┐              │
-│          │  │ Total:  7.7 GB                     │              │
-│          │  │ Used:   654 MB (8%)                │              │
-│          │  │ Free:   3.4 GB                     │              │
-│          │  └────────────────────────────────────              │
-│          │                                                      │
-│          │  [Execute Cleanup] [View Details] [Ignore]           │
-│          │                                                      │
-──────────┴──────────────────────────────────────────────────────┤
-│  [@server-01] [/restart] [scan all] [help]                       │
-│  ┌──────────────────────────────────────────────────────────┐  │
-│  │ Enter command or question...                    [📎] [▶] │  │
-│  └──────────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────────┘
-```
+![AI Chat](docs/screenshots/ai-chat.png)
+
+Execute commands via natural language — *"Check memory on server-02"* or *"Why is my app slow?"*
 
 ### Web SSH — Browser-based Terminal
 
-```
-┌─────────────────────────────────────────────────────────────────
-│  ️ Terminal                                                     │
-├──────────┬──────────────────────────────────────────────────────┤
-│          │  [GCP-West 🟢×] [AWS-EU ×] [+ New Connection]     │
-│  Quick   │                                                      │
-│  Connect │  moisse@gcp-west:~$ docker ps                        │
-│          │  CONTAINER ID   IMAGE          STATUS                │
-│          │  abc123         nginx:latest   Up 2 hours            │
-│          │  def456         redis:7        Up 2 hours            │
-│          │                                                      │
-│  Favorites│  moisse@gcp-west:~$ _                              │
-│          │                                                      │
-│  Recent  │  [⬆ Upload] [⬇ Download] [⛶ Fullscreen] [⚙ Settings]│
-──────────┴──────────────────────────────────────────────────────┘
-```
+![Terminal](docs/screenshots/terminal.png)
 
----
+Browser-based terminal with multi-tab support, no password memorization needed.
+
+### Certificate Management
+
+![Certificates](docs/screenshots/certificates.png)
+
+Auto-scan SSH keys, SSL certs, and domain expiry with proactive alerts.
+
+### Settings
+
+![Settings](docs/screenshots/settings.png)
+
+Server management, notification configuration, and security settings.
 
 ## ✨ Features
 
@@ -310,13 +259,13 @@ JWT_EXPIRES_IN=7d
 
 | Phase | Feature | Status | ETA |
 |-------|---------|--------|-----|
-| **Phase 1** | MVP Dashboard + Server CRUD | ✅ Done | 2026-08-05 |
-| **Phase 2** | Web SSH Terminal | ✅ Done | 2026-08-05 |
-| **Phase 3** | AI Chat Operations | ✅ Done | 2026-08-05 |
+| **Phase 1** | MVP Dashboard + Server CRUD | ✅ Done | — |
+| **Phase 2** | Web SSH Terminal | ✅ Done | — |
+| **Phase 3** | AI Chat Operations | ✅ Done | — |
 | **Phase 4** | Netdata Metrics Integration | 🔄 In Progress | 2026-08-12 |
-| **Phase 5** | Certificate Auto-scan | ⚪ Planned | 2026-08-19 |
-| **Phase 6** | Batch Operations + Ansible | ⚪ Planned | 2026-08-26 |
-| **Phase 7** | Mobile Responsive Layout | ⚪ Planned | 2026-09-02 |
+| **Phase 5** | Certificate Auto-scan | ⚪ Planned | — |
+| **Phase 6** | Batch Operations + Ansible | ⚪ Planned | — |
+| **Phase 7** | Mobile Responsive Layout |  Planned | — |
 | **Phase 8** | Docker Compose One-Click Deploy |  Planned | 2026-09-09 |
 
 ---
