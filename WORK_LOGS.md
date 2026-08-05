@@ -36,12 +36,12 @@
 - [x] **Web SSH Terminal 命令行**: 实现打字输入 `top`, `status`, `ping`, `uname`, `help`, `clear` 并在屏幕追加彩色命令日志。
 - [x] **Dashboard 动态 Modal**: 实现 `Add Server` 模态弹窗与 `AIOpsDB` 数据库动态增删查改。
 
-### 10. 首次登录超管向导 (Super Admin Setup) & Tailwind 引擎挂载完结 (2026-08-06 00:33)
-- [x] **研发首次登录初始化向导 (`Login.vue`)**: 支持自动判断系统初始化状态，首次访问呈现“⚡ 首次运行：请设置超级管理员账号与密码”向导，初始化完成后切换为标准登录。
-- [x] **后端 SQLite `users` 表与 Auth 接口**: 在 `backend/src/index.js` 中增加 `users` 表、`/api/auth/status`、`/api/auth/setup` 与 `/api/auth/login` 接口。
-- [x] **路由守卫 (Auth Navigation Guard)**: 在 `router/index.ts` 中挂载全局路由拦截，未登录用户访问任何页面自动引导至 `/login`。
-- [x] **挂载 Tailwind 全量布局引擎 (`index.html`)**: 引入 Tailwind CSS 全量编译驱动包，彻底解决 `flex`、`grid`、`rounded-xl` 等布局渲染问题。
-- [x] **实测与部署**: 线上 `http://34.136.76.211:3000/api/auth/status` 准确返回 `{"initialized":false}`，完成云服务器与 GitHub (`b09f4dc`) 全线发布。
+### 11. 纯净系统初始化 & UI 重叠修复 & 著作权标识完结 (2026-08-06 00:38)
+- [x] **全剥离设计搞遗留 Seed 数据**: 彻底删除了后端 `backend/src/index.js` 中硬编码的 5 台示例节点与证书数据。
+- [x] **优雅纯净空状态 (`Dashboard.vue` & `Certificates.vue`)**: 系统首次部署初始化后呈现 100% 纯净空状态卡片，支持用户添加、删除节点。
+- [x] ** TopNav 遮挡修补 (`TopNav.vue`)**: 调整顶栏间距 `pl-[260px]`，彻底解决了 `Nodes` 被 `240px` 侧边栏遮挡的问题。
+- [x] **动态用户头像首字母**: 从 `localStorage` 解析 `username`，动态大写提取（如 `admin` 渲染 `A`）。
+- [x] **植入创始人著作权标识 (`Sidebar.vue`)**: 侧边栏底部清晰嵌入 `Design by Moisse 2026 | AI Ops Hub` 版权说明。
 
 ---
 
