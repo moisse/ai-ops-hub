@@ -1,0 +1,25 @@
+{
+  "name": "ai-ops-hub-backend",
+  "version": "0.1.0",
+  "description": "AI Ops Hub - 智能运维后端服务",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "node --watch src/index.js",
+    "start": "node src/index.js",
+    "lint": "eslint src/"
+  },
+  "keywords": ["ops", "ai", "server-management"],
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.21.0",
+    "better-sqlite3": "^11.0.0",
+    "ssh2": "^1.15.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.0",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "devDependencies": {
+    "eslint": "^9.0.0"
+  }
+}

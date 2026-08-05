@@ -1,0 +1,45 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Environment variables (NEVER commit real values)
+.env
+.env.local
+.env.production
+
+# Build output
+dist/
+build/
+.out/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Database
+*.db
+*.sqlite
+data/
+
+# SSH keys (NEVER commit)
+*.pem
+*.key
+.ssh/
+
+# Secrets
+secrets/
+credentials/
+
+# Docker
+docker-compose.override.yml
