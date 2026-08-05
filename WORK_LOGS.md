@@ -36,11 +36,11 @@
 - [x] **Web SSH Terminal 命令行**: 实现打字输入 `top`, `status`, `ping`, `uname`, `help`, `clear` 并在屏幕追加彩色命令日志。
 - [x] **Dashboard 动态 Modal**: 实现 `Add Server` 模态弹窗与 `AIOpsDB` 数据库动态增删查改。
 
-### 5. 全栈部署与 systemd 常驻完结里程碑 (2026-08-06 00:19)
-- [x] **systemd 常驻守护生效**: `ai-ops-hub.service` 状态置为 `active (running)`，实现 GCP 服务器开机自启与崩溃 5s 内自动拉起。
-- [x] **后端 API & SQLite 数据解封**: Express + SQLite 连通，5 台种子节点（AWS/GCP/Aliyun/Tencent/Azure）与 4 张 SSL 证书数据填充完毕。
-- [x] **Tailwind CSS 编译修补**: 样式包由 1.16KB 预编译扩充至 17.83KB，完全载入赛博朋克深空黑 Design System。
-- [x] **外部 HTTP 200 验证**: 线上服务 `http://34.136.76.211:3000/` 响应正常，完成全栈交接。
+### 6. Vue 3 + Vue Router 真实单页工程重构 (2026-08-06 00:23)
+- [x] **引入与挂载 Vue Router (`vue-router`)**: 彻底替代原先硬编码 `v-if`，新建 `frontend/src/router/index.ts` 路由映射表，支持 `/dashboard`, `/chat`, `/terminal`, `/certificates`, `/settings`。
+- [x] **重构全局 Sidebar 导航 (`Sidebar.vue`)**: 使用 `useRouter` 与 `useRoute` 触发编程式导航与基于当前路由的动态高亮。
+- [x] **完成全栈打包与线上部署**: 在 GCP 服务器上成功预编译 55 个 Vue 3 模块，生成 `dist/assets/index-B3rayihp.js` 生产包并常驻运行！
+- [x] **GitHub 仓库同步**: 提交 commit `refactor(frontend): integrate Vue Router` 并强推至 `main` 分支。
 
 ---
 
