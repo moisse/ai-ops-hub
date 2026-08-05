@@ -189,24 +189,26 @@ app.get('/api/servers', (req, res) => {
 
 app.post('/api/servers', (req, res) => {
   const { hostname, ip, port = 22, username = 'root', authType = 'password', region = 'AWS US-East' } = req.body;
+  const finalHost = hostname || ip || 'node-server';
+  const finalIp = ip || hostname || '127.0.0.1';
   const cpu = Math.floor(Math.random() * 35 + 10);
   const memory = Math.floor(Math.random() * 45 + 25);
   
   if (db) {
     db.run(
       'INSERT INTO servers (hostname, ip, port, username, authType, region, status, cpu, memory) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-      [hostname || ip, ip, port, username, authType, region, 'online', cpu, memory],
+      [finalHost, finalIp, port, username, authType, region, 'online', cpu, memory],
       function(err) {
         if (err) return res.status(500).json({ error: err.message });
-        logEvent('info', 'Server node added to SQLite DB', { id: this.lastID, hostname, ip });
-        res.json({ id: this.lastID, hostname, ip, port, username, authType, region, status: 'online', cpu, memory });
+        logEvent('info', 'Server node added to SQLite DB', { id: this.lastID, hostname: finalHost, ip: finalIp });
+        res.json({ id: this.lastID, hostname: finalHost, ip: finalIp, port, username, authType, region, status: 'online', cpu, memory });
       }
     );
   } else {
-    const newServer = { id: String(Date.now()), hostname: hostname || ip, ip, port, username, authType, region, status: 'online', cpu, memory };
+    const newServer = { id: String(Date.now()), hostname: finalHost, ip: finalIp, port, username, authType, region, status: 'online', cpu, memory };
     fileStore.servers.unshift(newServer);
     saveFileStore();
-    logEvent('info', 'Server node added to File DB', { id: newServer.id, hostname, ip });
+    logEvent('info', 'Server node added to File DB', { id: newServer.id, hostname: finalHost, ip: finalIp });
     res.json(newServer);
   }
 });
