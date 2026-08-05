@@ -36,12 +36,9 @@
 - [x] **Web SSH Terminal 命令行**: 实现打字输入 `top`, `status`, `ping`, `uname`, `help`, `clear` 并在屏幕追加彩色命令日志。
 - [x] **Dashboard 动态 Modal**: 实现 `Add Server` 模态弹窗与 `AIOpsDB` 数据库动态增删查改。
 
-### 13. TopNav 双语国际化全接入完结 (2026-08-06 00:46)
-- [x] **TopNav 双语字典扩展 (`locales.ts`)**: 在 `locales.ts` 中增加 `topnav.nodes`、`topnav.clusters` 与 `topnav.security` 字典映射。
-- [x] **中文/英文状态完美响应 (`TopNav.vue`)**:
-  - 中文状态：`服务器节点` | `集群管理` | `安全防护`
-  - 英文状态：`Nodes` | `Clusters` | `Security`
-- [x] **云服务器与 GitHub (`f880afb`) 同步更新**: 线上 `34.136.76.211:3000` 已实时更新。
+### 14. TopNav 顶部重复项目标题删除完结 (2026-08-06 00:47)
+- [x] **删除 TopNav 重复标题 (`TopNav.vue`)**: 移除了右侧顶栏中与左侧 Sidebar 侧边栏重复显示的 `AI Ops 智能运维枢纽` 项目标题，页面更加利落简洁。
+- [x] **云服务器与 GitHub (`7bf16aa`) 同步更新**: 线上 `34.136.76.211:3000` 已实时生效。
 
 ---
 
