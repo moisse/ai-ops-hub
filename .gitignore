@@ -43,3 +43,15 @@ credentials/
 
 # Docker
 docker-compose.override.yml
+
+# Design files (Stitch exports)
+stitch_*/
+*.design/
+
+# Documentation (internal)
+docs/internal/
+*.mdx
+
+# Build artifacts
+*.tar.gz
+*.zip
