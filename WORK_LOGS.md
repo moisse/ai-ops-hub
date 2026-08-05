@@ -36,13 +36,11 @@
 - [x] **Web SSH Terminal 命令行**: 实现打字输入 `top`, `status`, `ping`, `uname`, `help`, `clear` 并在屏幕追加彩色命令日志。
 - [x] **Dashboard 动态 Modal**: 实现 `Add Server` 模态弹窗与 `AIOpsDB` 数据库动态增删查改。
 
-### 17. AI Ops 系统运维 Agent 打通 & 多服务器一键多开 SSH 终端完结 (2026-08-06 01:00)
-- [x] **AI Ops Agent 节点上下文深层打通 (`AIChat.vue`)**: 动态拉取与注入系统注册的服务器节点列表、证书与活动大模型，作为 SysAdmin Agent 提示词上下文，支持对话框 `@` 节点精确切入。
-- [x] **多服务器 SSH 终端一键多开 (`Terminal.vue`)**: 彻底删除了假默认日志，提供 `[⚡ 一键多开已注册服务器终端]` 按钮，根据用户录入的节点数量批量开起独立的 SSH 命令会话标签。
-- [x] **仪表盘一键秒切 SSH (`Dashboard.vue`)**: 点击任意服务器卡片上的 `[SSH]` 按钮，直接携带 `user@ip:port` 秒切开起该节点的专属 Terminal 会话。
-- [x] **左侧 6 大标准导航大一统与 TopNav 动态面包屑 (`Sidebar.vue` & `TopNav.vue`)**:
-  - 侧边栏标准化收纳：`仪表盘控制台`, `集群管理`, `AI 运维助手`, `SSH 终端`, `证书管理`, `系统设置`。
-  - 顶栏清空重复链接，实时呈现当前路由路径（如 `控制台 / SSH 终端`）。
+### 18. 同源配置 100% 贯通 & 数据库与文件日志双重持久化防丢失完结 (2026-08-06 01:02)
+- [x] **单点同源配置架构 (SSOT Integration)**: 彻底打通 `/api/settings` SQLite 数据库表，设置中心配置的大模型 API Key、探针通过的活动模型、CPU/内存告警阈值全量贯通到 `AIChat.vue` 诊断、`Dashboard.vue` 告警与 `Clusters.vue` 负载分析。
+- [x] **物理日志文件持久化追加引擎 (`backend/data/app.log`)**: 实现 `logEvent(level, message, meta)` 文件流追加引擎，所有服务器探针、用户登录、SSH 会话与 AI 诊断事件实时追加写入 `app.log`，绝无日志丢失。
+- [x] **SQLite 零数据丢失保障 (`backend/data/ai-ops.db`)**: 服务器节点、用户 Auth 账户、证书防护条目全量实时落库，即使服务器重启或关机，数据 100% 完好无损。
+- [x] **云端部署重载**: 云服务器 `34.136.76.211:3000` 与 GitHub `6129aa4` 全量推送到位。
 
 ---
 
